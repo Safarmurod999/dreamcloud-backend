@@ -1,0 +1,23 @@
+import { HttpStatus, Logger } from '@nestjs/common';
+
+import { DbExceptions } from './db.exception';
+import { BaseResponse } from '../base.response';
+
+export class ServiceExceptions {
+  static handle(
+    e: any,
+    serviceName: string,
+    methodName: string,
+  ): BaseResponse<null> {
+    const logger = new Logger(ServiceExceptions.name);
+    logger.error(
+      `Service: [${serviceName}], method: [${methodName}], Error: ${e}`,
+    );
+
+    return {
+      status: e.code ? e.code : HttpStatus.INTERNAL_SERVER_ERROR,
+      data: null,
+      message: e.message,
+    };
+  }
+}
