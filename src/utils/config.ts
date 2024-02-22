@@ -3,7 +3,6 @@ import 'dotenv/config'
 import { join } from 'path';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DataSourceOptions } from 'typeorm';
-import { CustomerEntity } from 'src/entities/customers.entity';
 
 export const configuration = {
     isProd: process.env['APP_STATUS'] == 'prod', 

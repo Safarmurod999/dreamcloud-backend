@@ -1,0 +1,44 @@
+import { Entity, Column, OneToMany } from 'typeorm';
+import { GeneralEntity } from '../utils/base.entity';
+
+@Entity('products')
+export class ProductEntity extends GeneralEntity {
+  @Column({ type: 'varchar', name: 'product_name', nullable: false })
+  product_name: string;
+
+  @Column({ type: 'integer', name: 'category_id', nullable: false })
+  category_id: number;
+
+  @Column({ type: 'integer', name: 'count', nullable: false })
+  count: number;
+  
+  @Column({ type: 'integer', name: 'price', nullable: false })
+  price: number;
+  
+  @Column({ type: 'integer', name: 'discount', nullable: false })
+  discount: number;
+
+  @Column({ type: 'integer', name: 'overweight', nullable: false })
+  overweight: number;
+
+  @Column({ type: 'varchar', name: 'size', nullable: false })
+  size: string;
+
+  @Column({ type: 'integer', name: 'capacity', nullable: false })
+  capacity: number;
+
+  @Column({ type: 'varchar', name: 'guarantee', nullable: false })
+  name: string;
+
+  @Column({ type: 'varchar', name: 'description', nullable: false })
+  description: string;
+
+
+  @Column({ type: 'text', name: 'image', nullable: false })
+  image: string;
+
+  @Column({ type: 'boolean', name: 'status', nullable: false })
+  status: boolean;
+  // @OneToMany(() => BookingEntity, (booking) => booking.user)
+  //     bookings: BookingEntity[];
+}

@@ -27,7 +27,7 @@ import { AuthModule } from './auth/auth.module';
         const logger = new Logger('DataSource');
         try {
           await dataSource.initialize();
-          logger.log('Data Source has been initialized');
+          logger.log('Data source has been initialized')
           return dataSource;
         } catch (e) {
           logger.error('Error during Data Source initialization', e);
