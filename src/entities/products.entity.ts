@@ -28,7 +28,7 @@ export class ProductEntity extends GeneralEntity {
   capacity: number;
 
   @Column({ type: 'varchar', name: 'guarantee', nullable: false })
-  name: string;
+  guarantee: string;
 
   @Column({ type: 'varchar', name: 'description', nullable: false })
   description: string;

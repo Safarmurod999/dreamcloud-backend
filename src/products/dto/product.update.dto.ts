@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class ProductCreateDto {
+export class ProductUpdateDto {
   @IsNotEmpty()
   @IsString()
   product_name: string;
@@ -47,6 +47,10 @@ export class ProductCreateDto {
   @IsNotEmpty()
   @IsString()
   description: string;
+
+  // @IsNotEmpty()
+  // @IsString()
+  // image: string;
 
   @IsBoolean()
   @IsNotEmpty()

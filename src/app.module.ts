@@ -8,6 +8,7 @@ import { dataSource } from './utils/dataSource';
 import { CustomersModule } from './customers/customers.module';
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
+import { ProductsModule } from './products/products.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -17,7 +18,8 @@ import { AuthModule } from './auth/auth.module';
     TypeOrmModule.forRoot(configuration.getTypeOrmConfig()),
     CustomersModule,
     AdminModule,
-    AuthModule
+    AuthModule,
+    ProductsModule,
   ],
   controllers: [],
   providers: [
@@ -27,7 +29,7 @@ import { AuthModule } from './auth/auth.module';
         const logger = new Logger('DataSource');
         try {
           await dataSource.initialize();
-          logger.log('Data source has been initialized')
+          logger.log('Data source has been initialized');
           return dataSource;
         } catch (e) {
           logger.error('Error during Data Source initialization', e);

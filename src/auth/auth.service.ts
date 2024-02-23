@@ -2,7 +2,7 @@ import { jwtHelper } from './../utils/helper';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AdminEntity } from '../entities/admin.entity';
-import { LoginDto } from './auth.dto';
+import { LoginDto } from './dto/auth.dto';
 import { Repository } from 'typeorm';
 import { BaseResponse } from '@utils/base.response';
 import { DbExceptions } from '@utils/exceptions/db.exception';

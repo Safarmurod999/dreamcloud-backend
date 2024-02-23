@@ -18,10 +18,10 @@ async function bootstrap() {
     .setTitle('Products example')
     .setDescription('The Products API description')
     .setVersion('1.0')
-    .addTag('Productss')
+    .addTag('Products')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('', app, document);
+  SwaggerModule.setup('api', app, document);
   await app.listen(3000);
 }
 bootstrap()
