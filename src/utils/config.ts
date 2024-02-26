@@ -8,13 +8,12 @@ export const configuration = {
     isProd: process.env['APP_STATUS'] == 'prod', 
     port: process.env['PORT'],
     getDataSourceConfig(): DataSourceOptions {
-        console.log(process.env['DB_HOST']);
         
         return {
             type: 'postgres' as any,
             host: process.env['DB_HOST'],
             port: parseInt(process.env['DB_PORT']),
-            username: process.env['DB_USERNAME'] || 'postgres',
+            username: process.env['DB_USERNAME'] || 'safarmurod',
             password: `${process.env['DB_PASSWORD']}`,
             database: process.env['DB_DATABASE'] || 'dreamcloud',
             entities: [join(__dirname, `../**/entities/**.entity.{ts,js}`)],
@@ -28,7 +27,7 @@ export const configuration = {
             type: process.env['DB_TYPE'] as any,
             host: process.env['DB_HOST'],
             port: parseInt(process.env['DB_PORT']),
-            username: process.env['DB_USERNAME'] || 'postgres',
+            username: process.env['DB_USERNAME'] || 'safarmurod',
             password: `${process.env['DB_PASSWORD']}`,
             database: process.env['DB_DATABASE'],
             entities: [join(__dirname, `../**/entities/**.entity.{ts,js}`)],

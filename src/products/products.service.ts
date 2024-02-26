@@ -71,12 +71,12 @@ export class ProductsService {
           image,
           status,
         })
-        .returning(['fullname', 'phone_number'])
+        .returning('*')
         .execute();
       return {
         status: HttpStatus.CREATED,
         data: newUser.raw,
-        message: 'Customer created successfully!',
+        message: 'Product created successfully!',
       };
     } catch (err) {
       return DbExceptions.handle(err);
@@ -108,7 +108,7 @@ export class ProductsService {
         return {
           status: HttpStatus.NOT_FOUND,
           data: null,
-          message: 'Customer not found!',
+          message: 'Product not found!',
         };
       }
       const { raw } = await this.productRepository
@@ -129,7 +129,20 @@ export class ProductsService {
           status,
         })
         .where({ id })
-        .returning(['fullname', 'phone_number', 'isActive'])
+        .returning([
+          'product_name',
+          'category_id',
+          'price',
+          'count',
+          'discount',
+          'overweight',
+          'size',
+          'capacity',
+          'guarantee',
+          'description',
+          'image',
+          'status',
+        ])
         .execute();
       return {
         status: HttpStatus.CREATED,

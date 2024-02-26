@@ -1,5 +1,6 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, JoinColumn } from 'typeorm';
 import { GeneralEntity } from '../utils/base.entity';
+import { OrdersEntity } from './orders.entity';
 
 @Entity('products')
 export class ProductEntity extends GeneralEntity {
@@ -33,12 +34,15 @@ export class ProductEntity extends GeneralEntity {
   @Column({ type: 'varchar', name: 'description', nullable: false })
   description: string;
 
-
   @Column({ type: 'text', name: 'image', nullable: false })
   image: string;
 
   @Column({ type: 'boolean', name: 'status', nullable: false })
   status: boolean;
-  // @OneToMany(() => BookingEntity, (booking) => booking.user)
-  //     bookings: BookingEntity[];
+
+  @Column({ type: 'integer', name: 'state', nullable: false,default:1 })
+  state: number;
+
+  @OneToMany(() => OrdersEntity, order => order.product_id)
+  orders: OrdersEntity[];
 }

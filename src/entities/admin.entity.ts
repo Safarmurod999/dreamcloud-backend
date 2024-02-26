@@ -11,6 +11,9 @@ export class AdminEntity extends GeneralEntity {
 
   @Column({ type: 'boolean', name: 'isActive', default: false })
   isSuperAdmin: boolean;
+
+  @Column({ type: 'integer', name: 'state', nullable: false,default:1 })
+  state: number;
   // @OneToMany(() => BookingEntity, (booking) => booking.user)
   //     bookings: BookingEntity[];
 }

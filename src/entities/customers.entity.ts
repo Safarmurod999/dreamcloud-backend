@@ -1,5 +1,6 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { GeneralEntity } from '../utils/base.entity';
+import { OrdersEntity } from './orders.entity';
 
 @Entity('customers')
 export class CustomerEntity extends GeneralEntity {
@@ -12,6 +13,8 @@ export class CustomerEntity extends GeneralEntity {
   @Column({ type: 'boolean', name: 'isActive', default: true })
   isActive: boolean;
 
-  // @OneToMany(() => BookingEntity, (booking) => booking.user)
-  //     bookings: BookingEntity[];
+  @OneToMany(() => OrdersEntity, (order) => {
+    return order.customer_id
+  })
+    orders: OrdersEntity[]; 
 }

@@ -9,6 +9,8 @@ import { CustomersModule } from './customers/customers.module';
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
+import { CategoriesModule } from './categories/categories.module';
+import { OrdersModule } from './orders/orders.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +22,8 @@ import { ProductsModule } from './products/products.module';
     AdminModule,
     AuthModule,
     ProductsModule,
+    CategoriesModule,
+    OrdersModule
   ],
   controllers: [],
   providers: [
