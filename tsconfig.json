@@ -20,7 +20,7 @@
     "paths": {
       "@utils/*": ["./src/utils/*"],
       "@dec/*": ["./src/decorators/*"],
-      "@entities/*": ["./src/entities/*"],
+      "@entities/*": ["./src/entities/*"]
     }
   }
 }

@@ -13,8 +13,14 @@ export class CustomerEntity extends GeneralEntity {
   @Column({ type: 'boolean', name: 'isActive', default: true })
   isActive: boolean;
 
-  @OneToMany(() => OrdersEntity, (order) => {
-    return order.customer_id
-  })
-    orders: OrdersEntity[]; 
+  @Column({ type: 'integer', name: 'state', nullable: false, default: 1 })
+  state: number;
+
+  @OneToMany(
+    () => OrdersEntity,
+    (order) => { 
+      return order.customer_id;
+    }
+  )
+  orders: OrdersEntity[];
 }

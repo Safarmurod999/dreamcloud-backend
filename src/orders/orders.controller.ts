@@ -10,7 +10,7 @@ export class OrdersController {
   constructor(private readonly ordersService:OrdersService) {}
 
   @Post()
-  async addOne(@Body() dto:OrdersCreateDto, @Res() res: Response) {
+  async addOne(@Body() dto:OrdersCreateDto[], @Res() res: Response) {
     let response = await this.ordersService.createOrder(dto);
 
     res.status(response.status).send(response);

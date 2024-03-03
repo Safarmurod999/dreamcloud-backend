@@ -62,44 +62,29 @@ export class OrdersService {
       return DbExceptions.handle(error);
     }
   }
-  async createOrder(dto: OrdersCreateDto): Promise<BaseResponse<OrdersEntity>> {
+  async createOrder(
+    dto: OrdersCreateDto[],
+  ): Promise<BaseResponse<OrdersEntity[]>> {
     try {
-      let { product_id, customer_id, count } = dto;
+      // let { product_id, customer_id, count } = dto;
 
-      //   let user = await this.ordersRepository.findOneBy({ category_name });
-      //   if (user) {
-      //     return {
-      //       status: HttpStatus.BAD_REQUEST,
-      //       data: null,
-      //       message: 'Category already exists!',
-      //     };
-      //   }
-        var product = await this.productsRepository.findOneBy({
-          id: product_id,
-        });
-        if (product.count >= count) {
-          product.count = product.count - count;
-        } else {
-          return {
-            status: HttpStatus.OK,
-            data: null,
-            message: 'Order count is larger than spare',
-          };
-        }
-      const newUser = await this.ordersRepository
-        .createQueryBuilder('orders')
-        .insert()
-        .into(OrdersEntity)
-        .values({
-          product_id,
-          customer_id,
-          count,
-        })
-        .returning(['product_id', 'customer', 'id,count'])
-        .execute();
+      // var product = await this.productsRepository.findOneBy({
+      //   id: product_id,
+      // });
+      // if (product.count >= count) {
+      //   product.count = product.count - count;
+      // } else {
+      //   return {
+      //     status: HttpStatus.OK,
+      //     data: null,
+      //     message: 'Order count is larger than spare',
+      //   };
+      // }
+      const items = dto.map((item) => this.ordersRepository.create(item));
+      const newUser = await this.ordersRepository.save(dto);
       return {
         status: HttpStatus.CREATED,
-        data: newUser.raw,
+        data: newUser,
         message: 'Order created successfully!',
       };
     } catch (err) {

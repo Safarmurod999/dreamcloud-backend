@@ -11,6 +11,8 @@ import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { OrdersModule } from './orders/orders.module';
+import { TechnologiesModule } from './technologies/technology.module';
+import { AddressesModule } from './adresses/addresses.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,7 +25,9 @@ import { OrdersModule } from './orders/orders.module';
     AuthModule,
     ProductsModule,
     CategoriesModule,
-    OrdersModule
+    OrdersModule,
+    TechnologiesModule,
+    AddressesModule,
   ],
   controllers: [],
   providers: [
