@@ -7,7 +7,6 @@ import { BaseResponse } from 'src/utils/base.response';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
 import { OrdersUpdateDto } from './dto/orders.update.dto';
 import { OrdersEntity } from '@entities/orders.entity';
-import { CustomerEntity } from '@entities/customers.entity';
 
 @Injectable()
 export class OrdersService {
@@ -16,8 +15,6 @@ export class OrdersService {
     private readonly ordersRepository: Repository<OrdersEntity>,
     @InjectRepository(ProductEntity)
     private readonly productsRepository: Repository<ProductEntity>,
-    @InjectRepository(CustomerEntity)
-    private readonly customersRepository: Repository<CustomerEntity>,
   ) {}
 
   async findAll(): Promise<BaseResponse<OrdersEntity[]>> {
@@ -40,37 +37,25 @@ export class OrdersService {
         var product = await this.productsRepository.findOneBy({
           id: data.product_id,
         });
-        if (product.count >= data.count) {
-          product.count = product.count - data.count;
-        } else {
-          return {
-            status: HttpStatus.OK,
-            data: null,
-            message: 'Order count is larger than spare',
-          };
-        }
-        var customer = await this.productsRepository.findOneBy({
-          id: data.customer_id,
-        });
       }
       return {
         status: HttpStatus.OK,
-        data: { data, product, customer },
+        data: { data, product },
         message: 'Data fetched successfully',
       };
     } catch (error) {
       return DbExceptions.handle(error);
     }
   }
-  async createOrder(
-    dto: OrdersCreateDto[],
-  ): Promise<BaseResponse<OrdersEntity[]>> {
+  async createOrder(dto: OrdersCreateDto): Promise<BaseResponse<OrdersEntity>> {
     try {
-      // let { product_id, customer_id, count } = dto;
+      let { product_id, count , customer_name,mobile_phone } = dto;
 
-      // var product = await this.productsRepository.findOneBy({
-      //   id: product_id,
-      // });
+      console.log(dto);
+      
+      var product = await this.productsRepository.findOneBy({
+        id: product_id,
+      });
       // if (product.count >= count) {
       //   product.count = product.count - count;
       // } else {
@@ -80,11 +65,17 @@ export class OrdersService {
       //     message: 'Order count is larger than spare',
       //   };
       // }
-      const items = dto.map((item) => this.ordersRepository.create(item));
-      const newUser = await this.ordersRepository.save(dto);
+      const newOrder = await this.ordersRepository
+        .createQueryBuilder('orders')
+        .insert()
+        .into(OrdersEntity)
+        .values({ product_id, count , customer_name,mobile_phone })
+        .returning('*')
+        .execute();
+
       return {
         status: HttpStatus.CREATED,
-        data: newUser,
+        data: newOrder.raw,
         message: 'Order created successfully!',
       };
     } catch (err) {
@@ -95,9 +86,9 @@ export class OrdersService {
   async updateOrder(
     params: any,
     dto: OrdersUpdateDto,
-  ): Promise<BaseResponse<OrdersEntity[]>> {
+  ): Promise<BaseResponse<OrdersEntity>> {
     try {
-      let { product_id, customer_id, count, state, recall } = dto;
+      let { product_id, customer_name, count, state, recall } = dto;
       let { id } = params;
       let user = await this.ordersRepository.findOneBy({ id });
       if (!user) {
@@ -110,9 +101,9 @@ export class OrdersService {
       const { raw } = await this.ordersRepository
         .createQueryBuilder('orders')
         .update(OrdersEntity)
-        .set({ product_id, customer_id, count, state, recall })
+        .set({ product_id, customer_name, count, state, recall })
         .where({ id })
-        .returning(['product_id', 'customer_id', 'count', 'state', 'recall'])
+        .returning(['product_id', 'customer_name', 'count', 'state', 'recall'])
         .execute();
       return {
         status: HttpStatus.CREATED,

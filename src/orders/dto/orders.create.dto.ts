@@ -1,13 +1,19 @@
-import { IsBoolean, IsNotEmpty,IsNumber} from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsBoolean, IsNotEmpty,IsNumber, IsString} from 'class-validator';
 
 export class OrdersCreateDto {
   @IsNotEmpty()
   @IsNumber()
+  @Type(() => Number)
   product_id: number;
 
   @IsNotEmpty()
-  @IsNumber()
-  customer_id: number;
+  @IsString()
+  customer_name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  mobile_phone: string;
 
   @IsNotEmpty()
   @IsNumber()

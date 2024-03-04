@@ -14,7 +14,7 @@ export class AuthService {
     private readonly adminRepository: Repository<AdminEntity>,
   ) {}
 
-  async login(dto: LoginDto): Promise<BaseResponse<string | Error>> {
+  async login(dto: LoginDto): Promise<BaseResponse<any | Error>> {
     try {
       let { username, password } = dto;
       const admin = await this.adminRepository.findOne({
@@ -36,7 +36,7 @@ export class AuthService {
 
       return {
         status: HttpStatus.OK,
-        data: TOKEN,
+        data: {access_token:TOKEN,username},
         message: 'Successfully logged in',
       };
     } catch (error) {

@@ -14,7 +14,6 @@ export class CategoryEntity extends GeneralEntity {
   state: number;
 
   @OneToMany(() => ProductEntity, (product) => {
-    console.log('product-category')
     return product.category_id
   })
     products: ProductEntity[];

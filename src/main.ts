@@ -14,6 +14,15 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.enableCors({
+    origin: '*', // You can set specific origins, e.g., ['http://example1.com', 'https://example2.com']
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Accept',
+    preflightContinue: false,
+    optionsSuccessStatus: 200,
+    credentials: true, // Set this to true if you need cookies or authentication headers to be sent cross-origin
+    maxAge: 3600, // Cache preflight requests for 1 hour (in seconds)
+  });
   const config = new DocumentBuilder()
     .setTitle('Products example')
     .setDescription('The Products API description')

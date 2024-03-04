@@ -1,12 +1,14 @@
 import { Entity, Column, OneToMany, OneToOne, ManyToOne } from 'typeorm';
 import { GeneralEntity } from '../utils/base.entity';
-import { CustomerEntity } from './customers.entity';
 import { ProductEntity } from './products.entity';
 
 @Entity('orders')
 export class OrdersEntity extends GeneralEntity {
-  @ManyToOne(() => CustomerEntity, customer => customer.id)
-  customer_id: number;
+  @Column({ type: 'varchar', name: 'customer_name', nullable: false })
+  customer_name: string;
+
+  @Column({ type: 'varchar', name: 'mobile_phone', nullable: false })
+  mobile_phone: string;
 
   @ManyToOne(() => ProductEntity, product => product.id)
   product_id: number;

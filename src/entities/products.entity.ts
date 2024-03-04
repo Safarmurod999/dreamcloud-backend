@@ -12,11 +12,11 @@ export class ProductEntity extends GeneralEntity {
 
   @Column({ type: 'integer', name: 'count', nullable: false })
   count: number;
-  
+
   @Column({ type: 'integer', name: 'price', nullable: false })
   price: number;
-  
-  @Column({ type: 'integer', name: 'discount', nullable: false })
+
+  @Column({ type: 'integer', name: 'discount', nullable: true })
   discount: number;
 
   @Column({ type: 'integer', name: 'overweight', nullable: false })
@@ -40,9 +40,9 @@ export class ProductEntity extends GeneralEntity {
   @Column({ type: 'boolean', name: 'status', nullable: false })
   status: boolean;
 
-  @Column({ type: 'integer', name: 'state', nullable: false,default:1 })
+  @Column({ type: 'integer', name: 'state', nullable: false, default: 1 })
   state: number;
 
-  @OneToMany(() => OrdersEntity, order => order.product_id)
+  @OneToMany(() => OrdersEntity, (order) => order.product_id)
   orders: OrdersEntity[];
 }

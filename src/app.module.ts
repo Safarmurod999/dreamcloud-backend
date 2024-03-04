@@ -5,7 +5,6 @@ import { configuration } from './utils/config';
 import { join } from 'path';
 import { DataSource } from 'typeorm';
 import { dataSource } from './utils/dataSource';
-import { CustomersModule } from './customers/customers.module';
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
@@ -13,6 +12,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { OrdersModule } from './orders/orders.module';
 import { TechnologiesModule } from './technologies/technology.module';
 import { AddressesModule } from './adresses/addresses.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,7 +20,6 @@ import { AddressesModule } from './adresses/addresses.module';
       envFilePath: join(process.cwd(), '.env'),
     }),
     TypeOrmModule.forRoot(configuration.getTypeOrmConfig()),
-    CustomersModule,
     AdminModule,
     AuthModule,
     ProductsModule,
@@ -28,6 +27,22 @@ import { AddressesModule } from './adresses/addresses.module';
     OrdersModule,
     TechnologiesModule,
     AddressesModule,
+    ServeStaticModule.forRoot({
+      serveRoot: '/uploads',
+      rootPath: join(__dirname, '..', 'uploads'), // Path to your static folder
+    }),
+    ServeStaticModule.forRoot({
+      serveRoot: '/uploads/products',
+      rootPath: join(__dirname, '..', 'uploads', 'products'), // Path to your static folder
+    }),
+    ServeStaticModule.forRoot({
+      serveRoot: '/uploads/technologies',
+      rootPath: join(__dirname, '..', 'uploads', 'technologies'), // Path to your static folder
+    }),
+    ServeStaticModule.forRoot({
+      serveRoot: '/uploads/addresses',
+      rootPath: join(__dirname, '..', 'uploads', 'addresses'), // Path to your static folder
+    }),
   ],
   controllers: [],
   providers: [
