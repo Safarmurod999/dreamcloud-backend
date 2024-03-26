@@ -46,9 +46,9 @@ export class CategoriesService {
         .insert()
         .into(CategoryEntity)
         .values({
-          category_name
+          category_name,
         })
-        .returning(['category_name','isActive','state'])
+        .returning(['category_name', 'isActive', 'state'])
         .execute();
       return {
         status: HttpStatus.CREATED,
@@ -60,11 +60,12 @@ export class CategoriesService {
     }
   }
 
-  async updateCategory(params:any,
-    dto: CategoriesUpdateDto
+  async updateCategory(
+    params: any,
+    dto: CategoriesUpdateDto,
   ): Promise<BaseResponse<CategoryEntity[]>> {
     try {
-      let {category_name,isActive,state } = dto;
+      let { category_name, isActive, state } = dto;
       let { id } = params;
       let user = await this.categoriesRepository.findOneBy({ id });
       if (!user) {
@@ -74,12 +75,16 @@ export class CategoriesService {
           message: 'Category not found!',
         };
       }
-      const {raw} = await this.categoriesRepository
+      const { raw } = await this.categoriesRepository
         .createQueryBuilder('categories')
         .update(CategoryEntity)
-        .set({ category_name,isActive,state  })
-        .where({id})
-        .returning(['category_name','isActive','state' ])
+        .set({
+          category_name: category_name ?? user.category_name,
+          isActive: isActive ?? user.isActive,
+          state: state ?? user.state,
+        })
+        .where({ id })
+        .returning(['category_name', 'isActive', 'state'])
         .execute();
       return {
         status: HttpStatus.CREATED,
@@ -91,15 +96,17 @@ export class CategoriesService {
     }
   }
 
-  async deleteCategory(param:any): Promise<BaseResponse<CategoryEntity>> {
+  async deleteCategory(param: any): Promise<BaseResponse<CategoryEntity>> {
     try {
       const { id } = param;
 
-      let {raw} = await this.categoriesRepository.createQueryBuilder().softDelete()
-      .from(CategoryEntity)
-      .where({ id })
-      .returning('*')
-      .execute();
+      let { raw } = await this.categoriesRepository
+        .createQueryBuilder()
+        .softDelete()
+        .from(CategoryEntity)
+        .where({ id })
+        .returning('*')
+        .execute();
 
       return {
         status: 200,
@@ -110,4 +117,5 @@ export class CategoriesService {
       return DbExceptions.handle(error);
     }
   }
+  
 }

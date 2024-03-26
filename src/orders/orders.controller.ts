@@ -32,7 +32,7 @@ export class OrdersController {
 
   @UseGuards(JwtGuard)
   @Put('/:id')
-  async updateOrder(@Param() param, @Body() dto: OrdersUpdateDto, @Res() res: Response) {
+  async updateOrder(@Param() param, @Body() dto: any, @Res() res: Response) {
     let response = await this.ordersService.updateOrder(param,dto);
 
     res.status(response.status).send(response);

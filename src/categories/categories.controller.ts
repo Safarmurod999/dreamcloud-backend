@@ -24,7 +24,7 @@ export class CategoriesController {
 
   @UseGuards(JwtGuard)
   @Put('/:id')
-  async updateCategory(@Param() param, @Body() dto: CategoriesUpdateDto, @Res() res: Response) {
+  async updateCategory(@Param() param, @Body() dto: any, @Res() res: Response) {
     let response = await this.categoriesService.updateCategory(param,dto);
 
     res.status(response.status).send(response);

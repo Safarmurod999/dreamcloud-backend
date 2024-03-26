@@ -17,7 +17,7 @@ async function bootstrap() {
   app.enableCors({
     origin: '*', // You can set specific origins, e.g., ['http://example1.com', 'https://example2.com']
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Accept',
+    allowedHeaders: 'Content-Type, Accept,Authorization',
     preflightContinue: false,
     optionsSuccessStatus: 200,
     credentials: true, // Set this to true if you need cookies or authentication headers to be sent cross-origin

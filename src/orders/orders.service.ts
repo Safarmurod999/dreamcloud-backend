@@ -17,12 +17,20 @@ export class OrdersService {
     private readonly productsRepository: Repository<ProductEntity>,
   ) {}
 
-  async findAll(): Promise<BaseResponse<OrdersEntity[]>> {
+  async findAll(): Promise<BaseResponse<any>> {
     try {
       let data = await this.ordersRepository.find();
+      let products = await this.productsRepository.find();
+
+      let result = data.map((el) => {
+        return {
+          ...el,
+          product_name: products.filter((item) => item.id == el.product_id)[0].product_name,
+        };
+      });
       return {
         status: HttpStatus.OK,
-        data: data,
+        data: result,
         message: 'Data fetched successfully',
       };
     } catch (error) {
@@ -49,10 +57,10 @@ export class OrdersService {
   }
   async createOrder(dto: OrdersCreateDto): Promise<BaseResponse<OrdersEntity>> {
     try {
-      let { product_id, count , customer_name,mobile_phone } = dto;
+      let { product_id, count, customer_name, mobile_phone } = dto;
 
       console.log(dto);
-      
+
       var product = await this.productsRepository.findOneBy({
         id: product_id,
       });
@@ -69,7 +77,7 @@ export class OrdersService {
         .createQueryBuilder('orders')
         .insert()
         .into(OrdersEntity)
-        .values({ product_id, count , customer_name,mobile_phone })
+        .values({ product_id, count, customer_name, mobile_phone })
         .returning('*')
         .execute();
 
@@ -88,9 +96,13 @@ export class OrdersService {
     dto: OrdersUpdateDto,
   ): Promise<BaseResponse<OrdersEntity>> {
     try {
-      let { product_id, customer_name, count, state, recall } = dto;
       let { id } = params;
       let user = await this.ordersRepository.findOneBy({ id });
+      console.log(user);
+      let { product_id, customer_name, count, state, recall, mobile_phone } =
+        dto;
+
+      
       if (!user) {
         return {
           status: HttpStatus.NOT_FOUND,
@@ -101,9 +113,23 @@ export class OrdersService {
       const { raw } = await this.ordersRepository
         .createQueryBuilder('orders')
         .update(OrdersEntity)
-        .set({ product_id, customer_name, count, state, recall })
+        .set({
+          product_id: product_id ?? user.product_id,
+          customer_name: customer_name ?? user.customer_name,
+          count: count ?? user.count,
+          state: state ?? user.state,
+          recall: recall ?? user.recall,
+          mobile_phone: mobile_phone ?? user.mobile_phone,
+        })
         .where({ id })
-        .returning(['product_id', 'customer_name', 'count', 'state', 'recall'])
+        .returning([
+          'product_id',
+          'customer_name',
+          'count',
+          'state',
+          'recall',
+          'mobile_phone',
+        ])
         .execute();
       return {
         status: HttpStatus.CREATED,
