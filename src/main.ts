@@ -36,7 +36,7 @@ async function bootstrap() {
 bootstrap()
     .then(() => {
 
-        logger.log(`Server is running on port: [${process.env.PORT}]`);
+        logger.log(`Server is running on port: [${process.env.PORT || '3000'}]`);
     
     })
     .catch((err) => {
