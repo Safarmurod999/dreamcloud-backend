@@ -24,9 +24,9 @@
 
 NestJs,Typescript,Typeorm va PostgreSQL,SwaggerUI texnologiyalaridan foydalanib yaratilgan RESTful API. <br/>
 Loyiha hozirda test rejimda va davomiy optimizing qilinmoqda.Agar kamchiliklar sezsangiz @UrinovSafarmurod telegram akauntiga yozib qoldiring. <br/>
-Loyiha backendi heroku serveriga quyidagi domenda deploy qilingan : https://dreamcloud-backend-e4327b791528.herokuapp.com/api#/ <br/>
-Backend ni brauzerda ochish uchun google sozlamalaridan ruxsat berish kerak !
-Frontend qismi esa netlify serveriga deploy qilingan : https://dream-cloud-matras.netlify.app/
+Loyiha backendi : https://dreamcloud-backend-e4327b791528.herokuapp.com/api#/ <br/>
+API ni brauzerda ochish uchun google sozlamalaridan ruxsat berish kerak !
+Loyiha frontendi : https://dream-cloud-matras.netlify.app/
 
 ## Installation
 
