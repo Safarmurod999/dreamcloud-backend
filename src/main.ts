@@ -24,7 +24,8 @@ async function bootstrap() {
     maxAge: 3600, // Cache preflight requests for 1 hour (in seconds)
   });
   const config = new DocumentBuilder()
-    .setTitle('https://dream-cloud-matras.netlify.app/')
+    .setTitle('Frontend : https://dream-cloud-matras.netlify.app')
+    .setDescription('Backend : https://dreamcloud-backend-e4327b791528.herokuapp.com/api#/')
     .setDescription('Matraslar.uz sayti uchun NestJS,Typeorm va PostgreSQL dan foydalanib RESTful API.')
     .setVersion('1.0')
     .build();
