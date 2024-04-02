@@ -22,8 +22,9 @@
 
 ## Description
 
-NestJs,Typescript,Typeorm va PostgreSQL texnologiyalaridan foydalanib yaratilgan RESTful API.
-Loyiha backendi heroku serveriga quyidagi domenda deploy qilingan:https://dreamcloud-backend-e4327b791528.herokuapp.com/
+NestJs,Typescript,Typeorm va PostgreSQL texnologiyalaridan foydalanib yaratilgan RESTful API. <br/>
+Loyiha backendi heroku serveriga quyidagi domenda deploy qilingan : https://dreamcloud-backend-e4327b791528.herokuapp.com/ <br/>
+Frontend qismi esa netlify serveriga deploy qilingan : https://dream-cloud-matras.netlify.app/
 
 ## Installation
 
