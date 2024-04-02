@@ -19,6 +19,9 @@ import { extname } from 'path';
 import { AddressesService } from './addresses.service';
 import { AddressCreateDto } from './dto/address.create.dto';
 import { AddressUpdateDto } from './dto/address.update.dto';
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('addresses')
 @Controller('addresses')
 export class AddressesController {
   constructor(private readonly addressesService: AddressesService) {}

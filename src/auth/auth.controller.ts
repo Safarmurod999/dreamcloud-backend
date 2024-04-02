@@ -2,7 +2,9 @@ import { LoginDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

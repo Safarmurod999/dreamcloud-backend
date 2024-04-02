@@ -20,6 +20,9 @@ import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '@utils/multer';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}

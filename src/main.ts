@@ -24,10 +24,9 @@ async function bootstrap() {
     maxAge: 3600, // Cache preflight requests for 1 hour (in seconds)
   });
   const config = new DocumentBuilder()
-    .setTitle('Products example')
-    .setDescription('The Products API description')
+    .setTitle('https://dream-cloud-matras.netlify.app/')
+    .setDescription('Matraslar.uz sayti uchun NestJS,Typeorm va PostgreSQL dan foydalanib RESTful API.')
     .setVersion('1.0')
-    .addTag('Products')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

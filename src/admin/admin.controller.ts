@@ -4,7 +4,9 @@ import { Request, Response } from 'express';
 import { AdminService } from './admin.service';
 import { AdminCreateDto } from './dto/admin.create.dto';
 import { AdminUpdateDto } from './dto/admin.update.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('admin')
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminsService: AdminService) {}
