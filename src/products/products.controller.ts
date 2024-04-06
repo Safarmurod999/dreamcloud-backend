@@ -80,13 +80,13 @@ export class ProductsController {
   async updateProduct(
     @Param() param,
     @UploadedFile() image: Express.Multer.File,
-    @Body() dto: ProductUpdateDto,
+    @Body() dto: any,
     @Res() res: Response,
   ) {
     let response = await this.productsService.updateProduct(
       param,
       dto,
-      image.filename,
+      image?.filename,
     );
 
     res.status(response.status).send(response);

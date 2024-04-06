@@ -103,8 +103,8 @@ export class ProductsService {
         status,
       } = dto;
       let { id } = params;
-      let user = await this.productRepository.findOneBy({ id });
-      if (!user) {
+      let product = await this.productRepository.findOneBy({ id });
+      if (!product) {
         return {
           status: HttpStatus.NOT_FOUND,
           data: null,
@@ -115,18 +115,18 @@ export class ProductsService {
         .createQueryBuilder('customers')
         .update(ProductEntity)
         .set({
-          product_name,
-          category_id,
-          price,
-          count,
-          discount,
-          overweight,
-          size,
-          capacity,
-          guarantee,
-          description,
-          image,
-          status,
+          product_name: product_name ?? product.product_name,
+          category_id: category_id ?? product.category_id,
+          price: price ?? product.price,
+          count: count ?? product.count,
+          discount: discount ?? product.discount,
+          overweight: overweight ?? product.overweight,
+          size: size ?? product.size,
+          capacity: capacity ?? product.capacity,
+          guarantee: guarantee ?? product.guarantee,
+          description: description ?? product.description,
+          image: image ?? product.image,
+          status: status ?? product.status,
         })
         .where({ id })
         .returning([
