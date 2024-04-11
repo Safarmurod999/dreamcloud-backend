@@ -147,7 +147,7 @@ export class ProductsService {
       return {
         status: HttpStatus.CREATED,
         data: raw,
-        message: 'Customer created successfully!',
+        message: 'Product updated successfully!',
       };
     } catch (error) {
       return DbExceptions.handle(error);
@@ -169,7 +169,7 @@ export class ProductsService {
       return {
         status: 200,
         data: raw,
-        message: 'Customer deleted successfully',
+        message: 'Product deleted successfully',
       };
     } catch (error) {
       return DbExceptions.handle(error);

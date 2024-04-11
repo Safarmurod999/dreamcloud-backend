@@ -82,7 +82,12 @@ export class TechnologiesService {
       const { raw } = await this.technologiesRepository
         .createQueryBuilder('ctechnologies')
         .update(TechnologyEntity)
-        .set({ name, description, video, state })
+        .set({
+          name: name ?? technology.name,
+          description: description ?? technology.description,
+          video: video ?? technology.video,
+          state: state ?? technology.state,
+        })
         .where({ id })
         .returning(['name', 'description', 'video', 'state'])
         .execute();
