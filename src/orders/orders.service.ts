@@ -28,6 +28,7 @@ export class OrdersService {
           product_name: products.filter((item) => item.id == el.product_id)[0].product_name,
         };
       });
+      
       return {
         status: HttpStatus.OK,
         data: result,
@@ -123,7 +124,7 @@ export class OrdersService {
         })
         .where({ id })
         .returning([
-          'product_id',
+          'product_name',
           'customer_name',
           'count',
           'state',
