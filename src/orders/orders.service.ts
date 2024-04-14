@@ -25,10 +25,11 @@ export class OrdersService {
       let result = data.map((el) => {
         return {
           ...el,
-          product_name: products.filter((item) => item.id == el.product_id)[0].product_name,
+          product_name: products.filter((item) => item.id == el.product_id)[0]
+            .product_name,
         };
       });
-      
+
       return {
         status: HttpStatus.OK,
         data: result,
@@ -91,19 +92,18 @@ export class OrdersService {
       return DbExceptions.handle(err);
     }
   }
-
   async updateOrder(
     params: any,
     dto: OrdersUpdateDto,
-  ): Promise<BaseResponse<OrdersEntity>> {
+  ): Promise<BaseResponse<any>> {
     try {
       let { id } = params;
+      let products = await this.productsRepository.find();
       let user = await this.ordersRepository.findOneBy({ id });
-      console.log(user);
+      let product_name = products.find((item) => item.id == user.product_id);
       let { product_id, customer_name, count, state, recall, mobile_phone } =
         dto;
 
-      
       if (!user) {
         return {
           status: HttpStatus.NOT_FOUND,
@@ -123,15 +123,9 @@ export class OrdersService {
           mobile_phone: mobile_phone ?? user.mobile_phone,
         })
         .where({ id })
-        .returning([
-          'product_name',
-          'customer_name',
-          'count',
-          'state',
-          'recall',
-          'mobile_phone',
-        ])
+        .returning('*')
         .execute();
+      raw[0].product_name = product_name.product_name;
       return {
         status: HttpStatus.CREATED,
         data: raw,
