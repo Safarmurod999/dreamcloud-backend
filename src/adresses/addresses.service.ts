@@ -85,14 +85,7 @@ export class AddressesService {
         .update(AddressesEntity)
         .set({ address, description, location, image, isActive, state })
         .where({ id })
-        .returning([
-          'address',
-          'description',
-          'location',
-          'image',
-          'isActive',
-          'state',
-        ])
+        .returning('*')
         .execute();
       return {
         status: HttpStatus.CREATED,

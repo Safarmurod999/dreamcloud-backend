@@ -89,7 +89,7 @@ export class TechnologiesService {
           state: state ?? technology.state,
         })
         .where({ id })
-        .returning(['name', 'description', 'video', 'state'])
+        .returning('*')
         .execute();
       return {
         status: HttpStatus.CREATED,

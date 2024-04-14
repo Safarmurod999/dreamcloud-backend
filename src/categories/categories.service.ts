@@ -84,7 +84,7 @@ export class CategoriesService {
           state: state ?? user.state,
         })
         .where({ id })
-        .returning(['category_name', 'isActive', 'state'])
+        .returning('*')
         .execute();
       return {
         status: HttpStatus.CREATED,

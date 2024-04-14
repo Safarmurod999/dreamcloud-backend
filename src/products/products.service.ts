@@ -129,20 +129,7 @@ export class ProductsService {
           status: status ?? product.status,
         })
         .where({ id })
-        .returning([
-          'product_name',
-          'category_id',
-          'price',
-          'count',
-          'discount',
-          'overweight',
-          'size',
-          'capacity',
-          'guarantee',
-          'description',
-          'image',
-          'status',
-        ])
+        .returning('*')
         .execute();
       return {
         status: HttpStatus.CREATED,
