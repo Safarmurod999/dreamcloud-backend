@@ -46,7 +46,7 @@ export class AdminService {
       return DbExceptions.handle(error);
     }
   }
-  async createAdmin(dto: AdminCreateDto): Promise<BaseResponse<AdminEntity>> {
+  async createAdmin(dto: any): Promise<BaseResponse<AdminEntity>> {
     try {
       let { username, password } = dto;
 
