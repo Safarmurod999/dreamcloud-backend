@@ -36,7 +36,11 @@ export class AuthService {
 
       return {
         status: HttpStatus.OK,
-        data: {access_token:TOKEN,username},
+        data: {
+          access_token: TOKEN,
+          username,
+          isSuperAdmin: admin.isSuperAdmin,
+        },
         message: 'Successfully logged in',
       };
     } catch (error) {

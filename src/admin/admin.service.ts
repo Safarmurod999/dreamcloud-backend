@@ -27,11 +27,9 @@ export class AdminService {
     }
   }
 
-  async createAdmin(
-    dto: AdminCreateDto,
-  ): Promise<BaseResponse<AdminEntity>> {
+  async createAdmin(dto: AdminCreateDto): Promise<BaseResponse<AdminEntity>> {
     try {
-      let { username,password } = dto;
+      let { username, password } = dto;
 
       let user = await this.adminRepository.findOneBy({ username });
       if (user) {
@@ -46,7 +44,8 @@ export class AdminService {
         .insert()
         .into(AdminEntity)
         .values({
-          username,password
+          username,
+          password,
         })
         .returning(['username', 'password'])
         .execute();
@@ -60,11 +59,12 @@ export class AdminService {
     }
   }
 
-  async updateAdmin(params:any,
-    dto: AdminUpdateDto
+  async updateAdmin(
+    params: any,
+    dto: AdminUpdateDto,
   ): Promise<BaseResponse<AdminEntity[]>> {
     try {
-      let { username,password,isSuperAdmin } = dto;
+      let { username, password, isSuperAdmin } = dto;
       let { id } = params;
       let user = await this.adminRepository.findOneBy({ id });
       if (!user) {
@@ -74,12 +74,16 @@ export class AdminService {
           message: 'Admin not found!',
         };
       }
-      const {raw} = await this.adminRepository
+      const { raw } = await this.adminRepository
         .createQueryBuilder('admins')
         .update(AdminEntity)
-        .set({ username, password, isSuperAdmin})
-        .where({id})
-        .returning(['username', 'password','isSuperAdmin'])
+        .set({
+          username: username ?? user.username,
+          password: password ?? user.password,
+          isSuperAdmin: isSuperAdmin ?? user.isSuperAdmin,
+        })
+        .where({ id })
+        .returning(['username', 'password', 'isSuperAdmin'])
         .execute();
       return {
         status: HttpStatus.CREATED,
@@ -91,15 +95,17 @@ export class AdminService {
     }
   }
 
-  async deleteAdmin(param:any): Promise<BaseResponse<AdminEntity>> {
+  async deleteAdmin(param: any): Promise<BaseResponse<AdminEntity>> {
     try {
       const { id } = param;
 
-      let {raw} = await this.adminRepository.createQueryBuilder().softDelete()
-      .from(AdminEntity)
-      .where({ id })
-      .returning('*')
-      .execute();
+      let { raw } = await this.adminRepository
+        .createQueryBuilder()
+        .softDelete()
+        .from(AdminEntity)
+        .where({ id })
+        .returning('*')
+        .execute();
 
       return {
         status: 200,
