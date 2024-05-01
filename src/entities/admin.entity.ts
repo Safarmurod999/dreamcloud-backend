@@ -9,7 +9,7 @@ export class AdminEntity extends GeneralEntity {
   @Column({ type: 'varchar', name: 'password', nullable: false })
   password: string;
 
-  @Column({ type: 'boolean', name: 'isActive', default: false })
+  @Column({ type: 'boolean', name: 'isSuperAdmin', default: false })
   isSuperAdmin: boolean;
 
   @Column({ type: 'integer', name: 'state', nullable: false,default:1 })
