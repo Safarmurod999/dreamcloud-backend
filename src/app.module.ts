@@ -13,6 +13,7 @@ import { OrdersModule } from './orders/orders.module';
 import { TechnologiesModule } from './technologies/technology.module';
 import { AddressesModule } from './adresses/addresses.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { CustomersModule } from './customers/customers.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,6 +28,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     OrdersModule,
     TechnologiesModule,
     AddressesModule,
+    CustomersModule,
     ServeStaticModule.forRoot({
       serveRoot: '/uploads',
       rootPath: join(__dirname, '..', 'uploads'), // Path to your static folder
