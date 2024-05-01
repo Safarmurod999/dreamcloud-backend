@@ -60,7 +60,17 @@ export class OrdersService {
   async createOrder(dto: OrdersCreateDto): Promise<BaseResponse<OrdersEntity>> {
     try {
       let { product_id, count, customer_name, mobile_phone } = dto;
+
       let product = await this.productsRepository.findOneBy({ id: product_id });
+
+      if (product.count < count) {
+        return {
+          status: HttpStatus.OK,
+          data: null,
+          message: 'There is not enough products in stock!',
+        };
+      }
+
       const { raw } = await this.productsRepository
         .createQueryBuilder('products')
         .update(ProductEntity)
@@ -71,13 +81,6 @@ export class OrdersService {
         .returning('*')
         .execute();
 
-      if (product.count < count) {
-        return {
-          status: HttpStatus.OK,
-          data: null,
-          message: 'There is not enough products in stock!',
-        };
-      }
       const newOrder = await this.ordersRepository
         .createQueryBuilder('orders')
         .insert()
