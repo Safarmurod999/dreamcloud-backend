@@ -6,6 +6,7 @@ import { AddressesEntity } from '@entities/adresses.entity';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
 import { AddressCreateDto } from './dto/address.create.dto';
 import { AddressUpdateDto } from './dto/address.update.dto';
+import { unlinkSync } from 'fs';
 
 @Injectable()
 export class AddressesService {
@@ -109,6 +110,7 @@ export class AddressesService {
         .returning('*')
         .execute();
 
+      unlinkSync(process.cwd() + '/uploads/' + 'addresses/' + raw[0].image);
       return {
         status: 200,
         data: raw,

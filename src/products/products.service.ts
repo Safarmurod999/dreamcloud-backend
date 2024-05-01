@@ -6,12 +6,15 @@ import { ProductCreateDto } from './dto/products.create.dto';
 import { BaseResponse } from 'src/utils/base.response';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
 import { ProductUpdateDto } from './dto/product.update.dto';
-
+import { OrdersEntity } from '@entities/orders.entity';
+import { unlinkSync } from 'fs';
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
+    @InjectRepository(OrdersEntity)
+    private readonly ordersRepository: Repository<OrdersEntity>,
   ) {}
 
   async findAll(): Promise<BaseResponse<ProductEntity[]>> {
@@ -144,7 +147,13 @@ export class ProductsService {
   async deleteProduct(param: any): Promise<BaseResponse<ProductEntity>> {
     try {
       const { id } = param;
-
+      let order = await this.ordersRepository
+        .createQueryBuilder()
+        .softDelete()
+        .from(OrdersEntity)
+        .where({ product_id: id })
+        .returning('*')
+        .execute();
       let { raw } = await this.productRepository
         .createQueryBuilder()
         .softDelete()
@@ -152,7 +161,7 @@ export class ProductsService {
         .where({ id })
         .returning('*')
         .execute();
-
+      unlinkSync(process.cwd() + '/uploads/' + 'products/' + raw[0].image);
       return {
         status: 200,
         data: raw,

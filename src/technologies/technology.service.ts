@@ -6,6 +6,7 @@ import { TechnologyCreateDto } from './dto/technology.create.dto';
 import { BaseResponse } from 'src/utils/base.response';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
 import { TechnologyUpdateDto } from './dto/technology.update.dto';
+import { unlinkSync } from 'fs';
 
 @Injectable()
 export class TechnologiesService {
@@ -112,7 +113,7 @@ export class TechnologiesService {
         .where({ id })
         .returning('*')
         .execute();
-
+      unlinkSync(process.cwd() + '/uploads/' + 'technologies/' + raw[0].video);
       return {
         status: 200,
         data: raw,

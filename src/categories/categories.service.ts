@@ -6,12 +6,18 @@ import { CategoriesCreateDto } from './dto/categories.create.dto';
 import { BaseResponse } from 'src/utils/base.response';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
 import { CategoriesUpdateDto } from './dto/categories.update.dto';
+import { ProductEntity } from '@entities/products.entity';
+import { OrdersEntity } from '@entities/orders.entity';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(CategoryEntity)
     private readonly categoriesRepository: Repository<CategoryEntity>,
+    @InjectRepository(ProductEntity)
+    private readonly productsRepository: Repository<ProductEntity>,
+    @InjectRepository(OrdersEntity)
+    private readonly ordersRepository: Repository<OrdersEntity>,
   ) {}
 
   async findAll(): Promise<BaseResponse<CategoryEntity[]>> {
@@ -99,6 +105,22 @@ export class CategoriesService {
   async deleteCategory(param: any): Promise<BaseResponse<CategoryEntity>> {
     try {
       const { id } = param;
+      let prouct = await this.productsRepository
+        .createQueryBuilder()
+        .softDelete()
+        .from(ProductEntity)
+        .where({ category_id: id })
+        .returning('*')
+        .execute();
+
+      let product_id = prouct.raw[0].id;
+
+      let order = await this.ordersRepository
+        .createQueryBuilder()
+        .softDelete()
+        .from(OrdersEntity)
+        .where({ product_id: product_id })
+        .execute();
 
       let { raw } = await this.categoriesRepository
         .createQueryBuilder()
@@ -117,5 +139,4 @@ export class CategoriesService {
       return DbExceptions.handle(error);
     }
   }
-  
 }

@@ -1,7 +1,7 @@
 import { ProductEntity } from 'src/entities/products.entity';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, OneToOne } from 'typeorm';
 import { OrdersCreateDto } from './dto/orders.create.dto';
 import { BaseResponse } from 'src/utils/base.response';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
@@ -60,21 +60,24 @@ export class OrdersService {
   async createOrder(dto: OrdersCreateDto): Promise<BaseResponse<OrdersEntity>> {
     try {
       let { product_id, count, customer_name, mobile_phone } = dto;
+      let product = await this.productsRepository.findOneBy({ id: product_id });
+      const { raw } = await this.productsRepository
+        .createQueryBuilder('products')
+        .update(ProductEntity)
+        .set({
+          count: product.count - count,
+        })
+        .where({ id: product_id })
+        .returning('*')
+        .execute();
 
-      console.log(dto);
-
-      var product = await this.productsRepository.findOneBy({
-        id: product_id,
-      });
-      // if (product.count >= count) {
-      //   product.count = product.count - count;
-      // } else {
-      //   return {
-      //     status: HttpStatus.OK,
-      //     data: null,
-      //     message: 'Order count is larger than spare',
-      //   };
-      // }
+      if (product.count < count) {
+        return {
+          status: HttpStatus.OK,
+          data: null,
+          message: 'There is not enough products in stock!',
+        };
+      }
       const newOrder = await this.ordersRepository
         .createQueryBuilder('orders')
         .insert()
