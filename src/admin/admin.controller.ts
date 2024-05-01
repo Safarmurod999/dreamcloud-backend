@@ -47,7 +47,7 @@ export class AdminController {
   @UseGuards(JwtGuard)
   async updateCustomer(
     @Param() param,
-    @Body() dto: AdminUpdateDto,
+    @Body() dto: any,
     @Res() res: Response,
   ) {
     let response = await this.adminsService.updateAdmin(param, dto);
