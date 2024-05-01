@@ -26,7 +26,26 @@ export class AdminService {
       return DbExceptions.handle(error);
     }
   }
-
+  async findOne(params: any): Promise<BaseResponse<any>> {
+    try {
+      let { username } = params;
+      let data = await this.adminRepository.findOne({ where: { username: username } });
+      if (!data) {
+        return {
+          status: HttpStatus.OK,
+          data: [],
+          message: 'No admin found!',
+        };
+      }
+      return {
+        status: HttpStatus.OK,
+        data: data,
+        message: 'Data fetched successfully',
+      };
+    } catch (error) {
+      return DbExceptions.handle(error);
+    }
+  }
   async createAdmin(dto: AdminCreateDto): Promise<BaseResponse<AdminEntity>> {
     try {
       let { username, password } = dto;

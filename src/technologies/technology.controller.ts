@@ -46,7 +46,7 @@ export class TechnologiesController {
     @Body() dto: TechnologyCreateDto,
     @Res() res: Response,
   ) {
-    let response = await this.technologiesService.createTechnology(dto,video.filename);
+    let response = await this.technologiesService.createTechnology(dto,video?.filename);
 
     res.status(response.status).send(response);
   }
@@ -80,7 +80,7 @@ export class TechnologiesController {
     @Body() dto: TechnologyUpdateDto,
     @Res() res: Response,
   ) {
-    let response = await this.technologiesService.updateTechnology(param, dto,video.filename);
+    let response = await this.technologiesService.updateTechnology(param, dto,video?.filename);
 
     res.status(response.status).send(response);
   }

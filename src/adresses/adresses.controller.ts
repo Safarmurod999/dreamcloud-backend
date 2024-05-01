@@ -86,7 +86,7 @@ export class AddressesController {
     let response = await this.addressesService.updateAddress(
       param,
       dto,
-      image.filename,
+      image?.filename,
     );
 
     res.status(response.status).send(response);

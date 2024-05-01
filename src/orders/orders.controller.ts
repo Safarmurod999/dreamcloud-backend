@@ -3,7 +3,6 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards } from 
 import { Request, Response } from 'express';
 import { JwtGuard } from 'src/auth/auth.guard';
 import { OrdersCreateDto } from './dto/orders.create.dto';
-import { OrdersUpdateDto } from './dto/orders.update.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('orders')

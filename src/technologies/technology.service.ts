@@ -67,7 +67,7 @@ export class TechnologiesService {
   async updateTechnology(
     params: any,
     dto: TechnologyUpdateDto,
-    video: string,
+    video: any,
   ): Promise<BaseResponse<TechnologyEntity[]>> {
     try {
       let { name, description, state } = dto;
@@ -81,7 +81,7 @@ export class TechnologiesService {
         };
       }
       const { raw } = await this.technologiesRepository
-        .createQueryBuilder('ctechnologies')
+        .createQueryBuilder('technologies')
         .update(TechnologyEntity)
         .set({
           name: name ?? technology.name,

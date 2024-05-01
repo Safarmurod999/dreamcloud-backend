@@ -1,10 +1,21 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 
 import { Request, Response } from 'express';
 import { AdminService } from './admin.service';
 import { AdminCreateDto } from './dto/admin.create.dto';
 import { AdminUpdateDto } from './dto/admin.update.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtGuard } from 'src/auth/auth.guard';
 
 @ApiTags('admin')
 @Controller('admin')
@@ -19,15 +30,27 @@ export class AdminController {
   }
 
   @Get()
-  async findAll(req: Request,@Res() res: Response) {
+  async findAll(req: Request, @Res() res: Response) {
     let response = await this.adminsService.findAll();
 
     res.status(response.status).send(response);
   }
 
+  @Get('/:id')
+  async findOne(@Param() param, req: Request, @Res() res: Response) {
+    let response = await this.adminsService.findOne(param);
+
+    res.status(response.status).send(response);
+  }
+
   @Put('/:id')
-  async updateCustomer(@Param() param, @Body() dto: AdminUpdateDto, @Res() res: Response) {
-    let response = await this.adminsService.updateAdmin(param,dto);
+  @UseGuards(JwtGuard)
+  async updateCustomer(
+    @Param() param,
+    @Body() dto: AdminUpdateDto,
+    @Res() res: Response,
+  ) {
+    let response = await this.adminsService.updateAdmin(param, dto);
 
     res.status(response.status).send(response);
   }
