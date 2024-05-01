@@ -56,7 +56,7 @@ export class ProductsService {
           message: 'Product already exists!',
         };
       }
-      const newUser = await this.productRepository
+      const newProduct = await this.productRepository
         .createQueryBuilder('customers')
         .insert()
         .into(ProductEntity)
@@ -78,7 +78,7 @@ export class ProductsService {
         .execute();
       return {
         status: HttpStatus.CREATED,
-        data: newUser.raw,
+        data: newProduct.raw,
         message: 'Product created successfully!',
       };
     } catch (err) {

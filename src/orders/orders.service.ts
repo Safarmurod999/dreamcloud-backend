@@ -105,12 +105,12 @@ export class OrdersService {
     try {
       let { id } = params;
       let products = await this.productsRepository.find();
-      let user = await this.ordersRepository.findOneBy({ id });
-      let product_name = products.find((item) => item.id == user.product_id);
+      let order = await this.ordersRepository.findOneBy({ id });
+      let product_name = products.find((item) => item.id == order.product_id);
       let { product_id, customer_name, count, state, recall, mobile_phone } =
         dto;
 
-      if (!user) {
+      if (!order) {
         return {
           status: HttpStatus.NOT_FOUND,
           data: null,
@@ -121,12 +121,12 @@ export class OrdersService {
         .createQueryBuilder('orders')
         .update(OrdersEntity)
         .set({
-          product_id: product_id ?? user.product_id,
-          customer_name: customer_name ?? user.customer_name,
-          count: count ?? user.count,
-          state: state ?? user.state,
-          recall: recall ?? user.recall,
-          mobile_phone: mobile_phone ?? user.mobile_phone,
+          product_id: product_id ?? order.product_id,
+          customer_name: customer_name ?? order.customer_name,
+          count: count ?? order.count,
+          state: state ?? order.state,
+          recall: recall ?? order.recall,
+          mobile_phone: mobile_phone ?? order.mobile_phone,
         })
         .where({ id })
         .returning('*')

@@ -50,8 +50,8 @@ export class AdminService {
     try {
       let { username, password } = dto;
 
-      let user = await this.adminRepository.findOneBy({ username });
-      if (user) {
+      let admin = await this.adminRepository.findOneBy({ username });
+      if (admin) {
         return {
           status: HttpStatus.BAD_REQUEST,
           data: null,
@@ -85,8 +85,8 @@ export class AdminService {
     try {
       let { username, password, isSuperAdmin } = dto;
       let { id } = params;
-      let user = await this.adminRepository.findOneBy({ id });
-      if (!user) {
+      let admin = await this.adminRepository.findOneBy({ id });
+      if (!admin) {
         return {
           status: HttpStatus.NOT_FOUND,
           data: null,
@@ -97,9 +97,9 @@ export class AdminService {
         .createQueryBuilder('admins')
         .update(AdminEntity)
         .set({
-          username: username ?? user.username,
-          password: password ?? user.password,
-          isSuperAdmin: isSuperAdmin ?? user.isSuperAdmin,
+          username: username ?? admin.username,
+          password: password ?? admin.password,
+          isSuperAdmin: isSuperAdmin ?? admin.isSuperAdmin,
         })
         .where({ id })
         .returning(['username', 'password', 'isSuperAdmin'])

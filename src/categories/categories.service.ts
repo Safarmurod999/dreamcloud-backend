@@ -39,15 +39,15 @@ export class CategoriesService {
     try {
       let { category_name } = dto;
 
-      let user = await this.categoriesRepository.findOneBy({ category_name });
-      if (user) {
+      let category = await this.categoriesRepository.findOneBy({ category_name });
+      if (category) {
         return {
           status: HttpStatus.BAD_REQUEST,
           data: null,
           message: 'Category already exists!',
         };
       }
-      const newUser = await this.categoriesRepository
+      const newCategory = await this.categoriesRepository
         .createQueryBuilder('categories')
         .insert()
         .into(CategoryEntity)
@@ -58,7 +58,7 @@ export class CategoriesService {
         .execute();
       return {
         status: HttpStatus.CREATED,
-        data: newUser.raw,
+        data: newCategory.raw,
         message: 'Category created successfully!',
       };
     } catch (err) {
@@ -73,8 +73,8 @@ export class CategoriesService {
     try {
       let { category_name, isActive, state } = dto;
       let { id } = params;
-      let user = await this.categoriesRepository.findOneBy({ id });
-      if (!user) {
+      let category = await this.categoriesRepository.findOneBy({ id });
+      if (!category) {
         return {
           status: HttpStatus.NOT_FOUND,
           data: null,
@@ -85,9 +85,9 @@ export class CategoriesService {
         .createQueryBuilder('categories')
         .update(CategoryEntity)
         .set({
-          category_name: category_name ?? user.category_name,
-          isActive: isActive ?? user.isActive,
-          state: state ?? user.state,
+          category_name: category_name ?? category.category_name,
+          isActive: isActive ?? category.isActive,
+          state: state ?? category.state,
         })
         .where({ id })
         .returning('*')
@@ -105,7 +105,7 @@ export class CategoriesService {
   async deleteCategory(param: any): Promise<BaseResponse<CategoryEntity>> {
     try {
       const { id } = param;
-      let prouct = await this.productsRepository
+      let product = await this.productsRepository
         .createQueryBuilder()
         .softDelete()
         .from(ProductEntity)
@@ -113,7 +113,7 @@ export class CategoriesService {
         .returning('*')
         .execute();
 
-      let product_id = prouct.raw[0].id;
+      let product_id = product.raw[0].id;
 
       let order = await this.ordersRepository
         .createQueryBuilder()

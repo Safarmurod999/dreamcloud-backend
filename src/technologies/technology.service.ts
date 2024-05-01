@@ -35,15 +35,15 @@ export class TechnologiesService {
     try {
       let { name, description } = dto;
 
-      let user = await this.technologiesRepository.findOneBy({ name });
-      if (user) {
+      let technology = await this.technologiesRepository.findOneBy({ name });
+      if (technology) {
         return {
           status: HttpStatus.BAD_REQUEST,
           data: null,
           message: 'Technology already exists!',
         };
       }
-      const newUser = await this.technologiesRepository
+      const newTechnology = await this.technologiesRepository
         .createQueryBuilder('technologies')
         .insert()
         .into(TechnologyEntity)
@@ -56,7 +56,7 @@ export class TechnologiesService {
         .execute();
       return {
         status: HttpStatus.CREATED,
-        data: newUser.raw,
+        data: newTechnology.raw,
         message: 'Technology created successfully!',
       };
     } catch (err) {

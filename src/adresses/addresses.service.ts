@@ -68,7 +68,7 @@ export class AddressesService {
   async updateAddress(
     params: any,
     dto: AddressUpdateDto,
-    image: string,
+    image: any,
   ): Promise<BaseResponse<AddressesEntity[]>> {
     try {
       let { address, description, location, isActive, state } = dto;
