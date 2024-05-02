@@ -102,7 +102,7 @@ export class AdminService {
           isSuperAdmin: isSuperAdmin ?? admin.isSuperAdmin,
         })
         .where({ id })
-        .returning(['username', 'password', 'isSuperAdmin'])
+        .returning('*')
         .execute();
       return {
         status: HttpStatus.CREATED,
