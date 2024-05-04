@@ -36,7 +36,7 @@ export class AdminController {
     res.status(response.status).send(response);
   }
 
-  @Get('/:id')
+  @Get('/:username')
   async findOne(@Param() param, req: Request, @Res() res: Response) {
     let response = await this.adminsService.findOne(param);
 

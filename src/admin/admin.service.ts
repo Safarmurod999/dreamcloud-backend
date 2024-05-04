@@ -30,6 +30,7 @@ export class AdminService {
     try {
       let { username } = params;
       let data = await this.adminRepository.findOne({ where: { username: username } });
+
       if (!data) {
         return {
           status: HttpStatus.OK,
