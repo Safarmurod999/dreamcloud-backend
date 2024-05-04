@@ -39,7 +39,7 @@ export class AdminService {
       }
       return {
         status: HttpStatus.OK,
-        data: data,
+        data: [data],
         message: 'Data fetched successfully',
       };
     } catch (error) {
