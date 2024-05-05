@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BaseResponse } from 'src/utils/base.response';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
+import { unlinkSync } from 'fs';
 
 @Injectable()
 export class AdminService {
@@ -49,7 +50,7 @@ export class AdminService {
   }
   async createAdmin(dto: any): Promise<BaseResponse<AdminEntity>> {
     try {
-      let { username, password } = dto;
+      let { username, password,email } = dto;
 
       let admin = await this.adminRepository.findOneBy({ username });
       if (admin) {
@@ -66,8 +67,9 @@ export class AdminService {
         .values({
           username,
           password,
+          email
         })
-        .returning(['username', 'password'])
+        .returning(['username', 'password','email'])
         .execute();
       return {
         status: HttpStatus.CREATED,
@@ -82,9 +84,10 @@ export class AdminService {
   async updateAdmin(
     params: any,
     dto: AdminUpdateDto,
-  ): Promise<BaseResponse<AdminEntity[]>> {
+    image: any,
+  ): Promise<BaseResponse<any>> {
     try {
-      let { username, password, isSuperAdmin } = dto;
+      let { username, password,email, isSuperAdmin } = dto;
       let { id } = params;
       let admin = await this.adminRepository.findOneBy({ id });
       if (!admin) {
@@ -99,8 +102,10 @@ export class AdminService {
         .update(AdminEntity)
         .set({
           username: username ?? admin.username,
+          email: email ?? admin.email,
           password: password ?? admin.password,
           isSuperAdmin: isSuperAdmin ?? admin.isSuperAdmin,
+          image: image ?? admin.image,
         })
         .where({ id })
         .returning('*')
@@ -126,7 +131,7 @@ export class AdminService {
         .where({ id })
         .returning('*')
         .execute();
-
+        unlinkSync(process.cwd() + '/uploads/' + 'avatar/' + raw[0].image);
       return {
         status: 200,
         data: raw,

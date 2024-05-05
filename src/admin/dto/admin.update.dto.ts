@@ -5,6 +5,9 @@ export class AdminUpdateDto {
   username: string;
 
   @IsString()
+  email: string;
+
+  @IsString()
   password: string;
 
   @IsBoolean()

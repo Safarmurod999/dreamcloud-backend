@@ -7,6 +7,10 @@ export class AdminCreateDto {
 
   @IsNotEmpty()
   @IsString()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
   password: string;
 
 }

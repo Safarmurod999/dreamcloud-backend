@@ -45,6 +45,10 @@ import { CustomersModule } from './customers/customers.module';
       serveRoot: '/uploads/addresses',
       rootPath: join(__dirname, '..', 'uploads', 'addresses'), // Path to your static folder
     }),
+    ServeStaticModule.forRoot({
+      serveRoot: '/uploads/avatar',
+      rootPath: join(__dirname, '..', 'uploads', 'avatar'), // Path to your static folder
+    }),
   ],
   controllers: [],
   providers: [

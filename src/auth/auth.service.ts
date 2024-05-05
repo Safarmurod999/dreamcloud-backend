@@ -30,8 +30,7 @@ export class AuthService {
       }
 
       const TOKEN = jwtHelper.sign({
-        username: admin.username,
-        isSuperAdmin: admin.isSuperAdmin,
+        id:admin.id,
       });
 
       return {

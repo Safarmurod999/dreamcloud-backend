@@ -84,7 +84,14 @@ export class AddressesService {
       const { raw } = await this.addressesRepository
         .createQueryBuilder('addresses')
         .update(AddressesEntity)
-        .set({ address, description, location, image, isActive, state })
+        .set({
+          address: address ?? item.address,
+          description: description ?? item.description,
+          location: location ?? item.location,
+          image: image ?? item.image,
+          isActive: isActive ?? item.isActive,
+          state: state ?? item.state,
+        })
         .where({ id })
         .returning('*')
         .execute();
