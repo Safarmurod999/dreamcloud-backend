@@ -19,9 +19,16 @@ export class CustomersService {
     limit: number = 10,
   ): Promise<BaseResponseGet<CustomersEntity[]>> {
     try {
+      if (Number.isNaN(page)) {
+        page = 1
+      }
+      if (Number.isNaN(limit)) {
+        limit = 10
+      }
       const skip = (page - 1) * limit;
+      
       const [data, totalCount] = await this.customersRepository.findAndCount({
-        skip: skip,
+        skip: skip ?? 0,
         take: limit,
       });
 
