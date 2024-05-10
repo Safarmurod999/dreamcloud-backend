@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BaseResponse } from 'src/utils/base.response';
+import { BaseResponse, BaseResponseGet } from 'src/utils/base.response';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
 import { CustomersEntity } from '@entities/customers.entity';
 import { CustomersCreateDto } from './dto/customers.create.dto';
@@ -14,16 +14,31 @@ export class CustomersService {
     private readonly customersRepository: Repository<CustomersEntity>,
   ) {}
 
-  async findAll(): Promise<BaseResponse<CustomersEntity[]>> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<BaseResponseGet<CustomersEntity[]>> {
     try {
-      let data = await this.customersRepository.find();
+      const skip = (page - 1) * limit;
+      const [data, totalCount] = await this.customersRepository.findAndCount({
+        skip: skip,
+        take: limit,
+      });
+
+      const totalPages = Math.ceil(totalCount / limit);
       return {
         status: HttpStatus.OK,
         data: data,
         message: 'Data fetched successfully',
+        pagination: {
+          page: page,
+          limit: limit,
+          totalCount: totalCount,
+          totalPages: totalPages,
+        },
       };
     } catch (error) {
-      return DbExceptions.handle(error);
+      return DbExceptions.handleget(error);
     }
   }
 
@@ -80,7 +95,7 @@ export class CustomersService {
         .update(CustomersEntity)
         .set({
           mobile_phone: mobile_phone ?? customer.mobile_phone,
-          recall: recall ?? customer.recall
+          recall: recall ?? customer.recall,
         })
         .where({ id })
         .returning('*')
