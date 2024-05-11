@@ -3,7 +3,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, OneToOne } from 'typeorm';
 import { OrdersCreateDto } from './dto/orders.create.dto';
-import { BaseResponse } from 'src/utils/base.response';
+import { BaseResponse, BaseResponseGet } from 'src/utils/base.response';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
 import { OrdersUpdateDto } from './dto/orders.update.dto';
 import { OrdersEntity } from '@entities/orders.entity';
@@ -17,11 +17,24 @@ export class OrdersService {
     private readonly productsRepository: Repository<ProductEntity>,
   ) {}
 
-  async findAll(): Promise<BaseResponse<any>> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<BaseResponseGet<any>> {
     try {
-      let data = await this.ordersRepository.find();
       let products = await this.productsRepository.find();
+      if (Number.isNaN(page)) {
+        page = 1;
+      }
+      if (Number.isNaN(limit)) {
+        limit = 10;
+      }
+      const skip = (page - 1) * limit;
 
+      const [data, totalCount] = await this.ordersRepository.findAndCount({
+        skip: skip ?? 0,
+        take: limit,
+      });
       let result = data.map((el) => {
         return {
           ...el,
@@ -29,14 +42,20 @@ export class OrdersService {
             .product_name,
         };
       });
-
+      const totalPages = Math.ceil(totalCount / limit);
       return {
         status: HttpStatus.OK,
         data: result,
         message: 'Data fetched successfully',
+        pagination: {
+          page: page,
+          limit: limit,
+          totalCount: totalCount,
+          totalPages: totalPages,
+        },
       };
     } catch (error) {
-      return DbExceptions.handle(error);
+      return DbExceptions.handleget(error);
     }
   }
   async findOne(params: any): Promise<BaseResponse<any>> {
