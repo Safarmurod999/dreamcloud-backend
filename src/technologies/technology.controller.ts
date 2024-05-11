@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Res,
   UploadedFile,
   UseGuards,
@@ -52,8 +53,8 @@ export class TechnologiesController {
   }
 
   @Get()
-  async findAll(req: Request, @Res() res: Response) {
-    let response = await this.technologiesService.findAll();
+  async findAll(req: Request, @Res() res: Response,@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
+    let response = await this.technologiesService.findAll(page,limit);
 
     res.status(response.status).send(response);
   }

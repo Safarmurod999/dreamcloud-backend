@@ -4,7 +4,7 @@ import { AdminEntity } from './../entities/admin.entity';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BaseResponse } from 'src/utils/base.response';
+import { BaseResponse, BaseResponseGet } from 'src/utils/base.response';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
 import { unlinkSync } from 'fs';
 
@@ -15,22 +15,46 @@ export class AdminService {
     private readonly adminRepository: Repository<AdminEntity>,
   ) {}
 
-  async findAll(): Promise<BaseResponse<AdminEntity[]>> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<BaseResponseGet<AdminEntity[]>> {
     try {
-      let data = await this.adminRepository.find();
+      if (Number.isNaN(page)) {
+        page = 1;
+      }
+      if (Number.isNaN(limit)) {
+        limit = 10;
+      }
+      const skip = (page - 1) * limit;
+
+      const [data, totalCount] = await this.adminRepository.findAndCount({
+        skip: skip ?? 0,
+        take: limit,
+      });
+
+      const totalPages = Math.ceil(totalCount / limit);
       return {
         status: HttpStatus.OK,
         data: data,
         message: 'Data fetched successfully',
+        pagination: {
+          page: page,
+          limit: limit,
+          totalCount: totalCount,
+          totalPages: totalPages,
+        },
       };
     } catch (error) {
-      return DbExceptions.handle(error);
+      return DbExceptions.handleget(error);
     }
   }
   async findOne(params: any): Promise<BaseResponse<any>> {
     try {
       let { username } = params;
-      let data = await this.adminRepository.findOne({ where: { username: username } });
+      let data = await this.adminRepository.findOne({
+        where: { username: username },
+      });
 
       if (!data) {
         return {
@@ -50,7 +74,7 @@ export class AdminService {
   }
   async createAdmin(dto: any): Promise<BaseResponse<AdminEntity>> {
     try {
-      let { username, password,email } = dto;
+      let { username, password, email } = dto;
 
       let admin = await this.adminRepository.findOneBy({ username });
       if (admin) {
@@ -67,9 +91,9 @@ export class AdminService {
         .values({
           username,
           password,
-          email
+          email,
         })
-        .returning(['username', 'password','email'])
+        .returning(['username', 'password', 'email'])
         .execute();
       return {
         status: HttpStatus.CREATED,
@@ -87,7 +111,7 @@ export class AdminService {
     image: any,
   ): Promise<BaseResponse<any>> {
     try {
-      let { username, password,email, isSuperAdmin } = dto;
+      let { username, password, email, isSuperAdmin } = dto;
       let { id } = params;
       let admin = await this.adminRepository.findOneBy({ id });
       if (!admin) {
@@ -131,7 +155,7 @@ export class AdminService {
         .where({ id })
         .returning('*')
         .execute();
-        unlinkSync(process.cwd() + '/uploads/' + 'avatar/' + raw[0].image);
+      unlinkSync(process.cwd() + '/uploads/' + 'avatar/' + raw[0].image);
       return {
         status: 200,
         data: raw,

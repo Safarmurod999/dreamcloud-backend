@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity } from '../entities/category.entity';
 import { Repository } from 'typeorm';
 import { CategoriesCreateDto } from './dto/categories.create.dto';
-import { BaseResponse } from 'src/utils/base.response';
+import { BaseResponse, BaseResponseGet } from 'src/utils/base.response';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
 import { CategoriesUpdateDto } from './dto/categories.update.dto';
 import { ProductEntity } from '@entities/products.entity';
@@ -20,16 +20,38 @@ export class CategoriesService {
     private readonly ordersRepository: Repository<OrdersEntity>,
   ) {}
 
-  async findAll(): Promise<BaseResponse<CategoryEntity[]>> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<BaseResponseGet<CategoryEntity[]>> {
     try {
-      let data = await this.categoriesRepository.find();
+      if (Number.isNaN(page)) {
+        page = 1;
+      }
+      if (Number.isNaN(limit)) {
+        limit = 10;
+      }
+      const skip = (page - 1) * limit;
+
+      const [data, totalCount] = await this.categoriesRepository.findAndCount({
+        skip: skip ?? 0,
+        take: limit,
+      });
+
+      const totalPages = Math.ceil(totalCount / limit);
       return {
         status: HttpStatus.OK,
         data: data,
         message: 'Data fetched successfully',
+        pagination: {
+          page: page,
+          limit: limit,
+          totalCount: totalCount,
+          totalPages: totalPages,
+        },
       };
     } catch (error) {
-      return DbExceptions.handle(error);
+      return DbExceptions.handleget(error);
     }
   }
 
@@ -39,7 +61,9 @@ export class CategoriesService {
     try {
       let { category_name } = dto;
 
-      let category = await this.categoriesRepository.findOneBy({ category_name });
+      let category = await this.categoriesRepository.findOneBy({
+        category_name,
+      });
       if (category) {
         return {
           status: HttpStatus.BAD_REQUEST,

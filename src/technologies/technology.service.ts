@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TechnologyEntity } from '../entities/technologies.entity';
 import { Repository } from 'typeorm';
 import { TechnologyCreateDto } from './dto/technology.create.dto';
-import { BaseResponse } from 'src/utils/base.response';
+import { BaseResponse, BaseResponseGet } from 'src/utils/base.response';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
 import { TechnologyUpdateDto } from './dto/technology.update.dto';
 import { unlinkSync } from 'fs';
@@ -15,16 +15,40 @@ export class TechnologiesService {
     private readonly technologiesRepository: Repository<TechnologyEntity>,
   ) {}
 
-  async findAll(): Promise<BaseResponse<TechnologyEntity[]>> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<BaseResponseGet<TechnologyEntity[]>> {
     try {
-      let data = await this.technologiesRepository.find();
+      if (Number.isNaN(page)) {
+        page = 1;
+      }
+      if (Number.isNaN(limit)) {
+        limit = 10;
+      }
+      const skip = (page - 1) * limit;
+
+      const [data, totalCount] = await this.technologiesRepository.findAndCount(
+        {
+          skip: skip ?? 0,
+          take: limit,
+        },
+      );
+
+      const totalPages = Math.ceil(totalCount / limit);
       return {
         status: HttpStatus.OK,
         data: data,
         message: 'Data fetched successfully',
+        pagination: {
+          page: page,
+          limit: limit,
+          totalCount: totalCount,
+          totalPages: totalPages,
+        },
       };
     } catch (error) {
-      return DbExceptions.handle(error);
+      return DbExceptions.handleget(error);
     }
   }
 

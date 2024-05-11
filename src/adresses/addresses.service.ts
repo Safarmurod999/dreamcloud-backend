@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BaseResponse } from 'src/utils/base.response';
+import { BaseResponse, BaseResponseGet } from 'src/utils/base.response';
 import { AddressesEntity } from '@entities/adresses.entity';
 import { DbExceptions } from 'src/utils/exceptions/db.exception';
 import { AddressCreateDto } from './dto/address.create.dto';
@@ -15,16 +15,38 @@ export class AddressesService {
     private readonly addressesRepository: Repository<AddressesEntity>,
   ) {}
 
-  async findAll(): Promise<BaseResponse<AddressesEntity[]>> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<BaseResponseGet<AddressesEntity[]>> {
     try {
-      let data = await this.addressesRepository.find();
+      if (Number.isNaN(page)) {
+        page = 1;
+      }
+      if (Number.isNaN(limit)) {
+        limit = 10;
+      }
+      const skip = (page - 1) * limit;
+
+      const [data, totalCount] = await this.addressesRepository.findAndCount({
+        skip: skip ?? 0,
+        take: limit,
+      });
+
+      const totalPages = Math.ceil(totalCount / limit);
       return {
         status: HttpStatus.OK,
         data: data,
         message: 'Data fetched successfully',
+        pagination: {
+          page: page,
+          limit: limit,
+          totalCount: totalCount,
+          totalPages: totalPages,
+        },
       };
     } catch (error) {
-      return DbExceptions.handle(error);
+      return DbExceptions.handleget(error);
     }
   }
 
