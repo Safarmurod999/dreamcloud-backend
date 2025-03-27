@@ -9,28 +9,37 @@ export const configuration = {
   port: process.env['PORT'],
   getDataSourceConfig(): DataSourceOptions {
     return {
-      type: 'postgres' as any ||'postgres',
-      host: process.env['DB_HOST'] || 'mahmud.db.elephantsql.com',
+      type: 'postgres' as any,
+      host: process.env['DB_HOST'],
       port: parseInt(process.env['DB_PORT']) || 5432,
-      username: process.env['DB_USERNAME'] || 'teuushgc',
-      password: `${process.env['DB_PASSWORD']}`||'CUzPvhLJudRYRKJJumRLNGVmvFcMw66-',
-      database: process.env['DB_DATABASE'] || 'teuushgc',
-      entities: [join(__dirname, `../**/entities/**.entity.{ts,js}`)],
+      username: process.env['DB_USERNAME'],
+      password: `${process.env['DB_PASSWORD']}`,
+      database: process.env['DB_DATABASE'],
+      entities: [join(__dirname , `../**/entities/**.entity.{ts,js}`)],
       synchronize: true,
+      ssl:true
     };
   },
   getTypeOrmConfig(): TypeOrmModuleOptions {
     const ormConfig = {
-      type: process.env['DB_TYPE'] as any ||'postgres',
-      host: process.env['DB_HOST']|| 'mahmud.db.elephantsql.com',
-      port: parseInt(process.env['DB_PORT'])|| 5432,
-      username: process.env['DB_USERNAME'] || 'teuushgc',
-      password: `${process.env['DB_PASSWORD']}`||'CUzPvhLJudRYRKJJumRLNGVmvFcMw66-',
-      database: process.env['DB_DATABASE']||'teuushgc',
+      type: 'postgres' as any,
+      host: process.env['DB_HOST'],
+      port: parseInt(process.env['DB_PORT']) || 5432,
+      username: process.env['DB_USERNAME'],
+      password: `${process.env['DB_PASSWORD']}`,
+      database: process.env['DB_DATABASE'],
       entities: [join(__dirname, `../**/entities/**.entity.{ts,js}`)],
       synchronize: true,
       logging: false,
+      ssl: true,
     };
+    console.log(
+      process.env.DB_HOST,
+      process.env.DB_PORT,
+      process.env.DB_USERNAME,
+      process.env.DB_PASSWORD,
+      process.env.DB_DATABASE,
+    );
 
     // WARNING!!! Don't change to TRUE in PRODUCTION
     // if TRUE auto changed DB by Entity model
