@@ -116,11 +116,12 @@ describe('CategoriesServiceImpl (unit)', () => {
     mockProductsRepo.find.mockResolvedValue([{ id: 10 }] as any);
     mockProductsRepo.delete.mockResolvedValue({ raw: [{ id: 10 }] });
     mockOrdersRepo.delete.mockResolvedValue({ raw: [] });
+    mockCategoriesRepo.findOneBy.mockResolvedValue({ id: 1 });
     mockCategoriesRepo.delete.mockResolvedValue({ raw: [{ id: 1 }] });
 
     const result = await service.deleteCategory({ id: 1 });
 
-    expect(mockProductsRepo.delete).toHaveBeenCalledWith(1);
+    expect(mockProductsRepo.delete).toHaveBeenCalledWith({ category_id: 1 });
     expect(mockOrdersRepo.delete).toHaveBeenCalledWith({ product_id: 10 });
     expect(mockCategoriesRepo.delete).toHaveBeenCalledWith(1);
 
