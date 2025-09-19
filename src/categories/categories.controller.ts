@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   Put,
@@ -10,17 +11,20 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { CategoriesService } from './categories.service';
-import { CategoriesCreateDto } from './dto/categories.create.dto';
 import { Request, Response } from 'express';
-import { CategoriesUpdateDto } from './dto/categories.update.dto';
-import { JwtGuard } from 'src/auth/auth.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { CategoriesService } from './service/categories.service';
+import { CategoriesCreateDto } from './dto/categories.create.dto';
+import { JwtGuard } from '../auth/auth.guard';
+import { Tokens } from '../utils/tokens';
 
 @ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(
+    @Inject(Tokens.Categories.Service)
+    private readonly categoriesService: CategoriesService,
+  ) {}
 
   @Post()
   async addOne(@Body() dto: CategoriesCreateDto, @Res() res: Response) {
@@ -30,7 +34,11 @@ export class CategoriesController {
   }
 
   @Get()
-  async findAll(req: Request, @Res() res: Response,@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
+  async findAll(
+    @Res() res: Response,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
     let response = await this.categoriesService.findAll(page, limit);
 
     res.status(response.status).send(response);
