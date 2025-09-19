@@ -3,7 +3,6 @@ import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { AdminUpdateDto } from '../dto/admin.update.dto';
 import { AdminEntity } from '../../entities/admin.entity';
 import { BaseResponse, BaseResponseGet } from 'src/utils/base.response';
-import { DbExceptions } from '../../utils/exceptions/db.exception';
 import { AdminRepository } from '../repository/admin.repository';
 import { Tokens } from '../../utils/tokens';
 import { AdminService } from './admin.service';
@@ -104,32 +103,37 @@ export class AdminServiceImpl implements AdminService {
         message: 'Admin not found!',
       };
     }
-    const data = this.adminRepository.update(
-      { id },
-      {
-        username: username ?? admin.username,
-        email: email ?? admin.email,
-        password: password ?? admin.password,
-        isSuperAdmin: isSuperAdmin ?? admin.isSuperAdmin,
-        image: image ?? admin.image,
-      },
-    );
+    admin.username = username ?? admin.username;
+    admin.email = email ?? admin.email;
+    admin.password = password ?? admin.password;
+    admin.isSuperAdmin = isSuperAdmin ?? admin.isSuperAdmin;
+    admin.image = image ?? admin.image;
+    await this.adminRepository.save(admin);
 
     return {
-      status: HttpStatus.CREATED,
-      data: data,
+      status: HttpStatus.OK,
+      data: admin,
       message: 'Admin updated successfully!',
     };
   }
 
   async deleteAdmin(param: any): Promise<BaseResponse<AdminEntity>> {
     const { id } = param;
-
-    let { raw } = await this.adminRepository.softDelete(id);
-    unlinkSync(process.cwd() + '/uploads/' + 'avatar/' + raw[0].image);
+    let admin = await this.adminRepository.findOneBy({ id });
+    if (!admin) {
+      return {
+        status: HttpStatus.NOT_FOUND,
+        data: null,
+        message: 'Admin not found!',
+      };
+    }
+    await this.adminRepository.delete(id);
+    if (admin.image) {
+      unlinkSync(process.cwd() + '/uploads/' + 'avatar/' + admin.image);
+    }
     return {
       status: 200,
-      data: raw,
+      data: admin,
       message: 'Admin deleted successfully',
     };
   }

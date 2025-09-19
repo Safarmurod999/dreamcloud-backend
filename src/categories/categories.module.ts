@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesServiceImpl } from './service/categories.service.impl';
 import { CategoriesController } from './categories.controller';
-import { CategoryEntity } from 'src/entities/category.entity';
-import { ProductEntity } from '@entities/products.entity';
-import { OrdersEntity } from '@entities/orders.entity';
-import { Tokens } from '@utils/tokens';
+import { CategoryEntity } from '../entities/category.entity';
+import { ProductEntity } from '../entities/products.entity';
+import { OrdersEntity } from '../entities/orders.entity';
+import { Tokens } from '../utils/tokens';
 import { CategoriesRepositoryImpl } from './repository/categories.repository.impl';
 
 @Module({
@@ -14,12 +14,12 @@ import { CategoriesRepositoryImpl } from './repository/categories.repository.imp
   ],
   providers: [
     {
-      provide: Tokens.Categories.Service,
-      useClass: CategoriesServiceImpl,
-    },
-    {
       provide: Tokens.Categories.Repository,
       useClass: CategoriesRepositoryImpl,
+    },
+    {
+      provide: Tokens.Categories.Service,
+      useClass: CategoriesServiceImpl,
     },
   ],
   controllers: [CategoriesController],

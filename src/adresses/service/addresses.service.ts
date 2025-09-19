@@ -16,6 +16,6 @@ export interface AddressesService {
     params: string,
     dto: AddressUpdateDto,
     image?: string,
-  ): Promise<BaseResponse<AddressesEntity[]>>;
+  ): Promise<BaseResponse<AddressesEntity>>;
   deleteAddress(param: any): Promise<BaseResponse<AddressesEntity>>;
 }

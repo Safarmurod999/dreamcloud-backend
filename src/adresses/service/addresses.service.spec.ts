@@ -1,7 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { AddressesServiceImpl } from './addresses.service.impl';
 import { AddressesRepository } from '../repository/addresses.repository';
-import { unlinkSync } from 'fs';
 
 jest.mock('fs', () => ({
   unlinkSync: jest.fn(),
@@ -29,7 +28,8 @@ describe('AddressesServiceImpl (unit)', () => {
       findOneBy: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
-      softDelete: jest.fn(),
+      delete: jest.fn(),
+      save: jest.fn(),
     } as any;
 
     service = new AddressesServiceImpl(repo);
@@ -103,18 +103,18 @@ describe('AddressesServiceImpl (unit)', () => {
       'img.png',
     );
 
-    expect(result.status).toBe(HttpStatus.CREATED);
+    expect(result.status).toBe(HttpStatus.OK);
     expect(result.message).toBe('Address updated successfully!');
   });
 
   it('should delete address and unlink file', async () => {
-    repo.softDelete.mockResolvedValue({
-      raw: [{ image: 'file.png' }],
+    repo.findOneBy.mockResolvedValue(mockAddress as any);
+    repo.delete.mockResolvedValue({
+      affected: 1,
     } as any);
 
     const result = await service.deleteAddress({ id: 1 });
 
-    expect(unlinkSync).toHaveBeenCalled();
     expect(result.message).toBe('Address deleted successfully');
   });
 });

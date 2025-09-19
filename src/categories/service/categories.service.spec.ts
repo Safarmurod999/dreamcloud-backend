@@ -14,13 +14,14 @@ describe('CategoriesServiceImpl (unit)', () => {
       create: jest.fn(),
       save: jest.fn(),
       update: jest.fn(),
-      softDelete: jest.fn(),
+      delete: jest.fn(),
     };
     mockProductsRepo = {
-      softDelete: jest.fn(),
+      delete: jest.fn(),
+      find: jest.fn(),
     };
     mockOrdersRepo = {
-      softDelete: jest.fn(),
+      delete: jest.fn(),
     };
 
     service = new CategoriesServiceImpl(
@@ -104,24 +105,26 @@ describe('CategoriesServiceImpl (unit)', () => {
       category_name: 'upd',
     } as any);
 
-    expect(result.status).toBe(HttpStatus.CREATED);
-    expect(result.data[0].id).toBe(1);
+    expect(result.status).toBe(HttpStatus.OK);
+    expect(result.data).toBeDefined();
+    expect(result.data.id).toBe(1);
+    expect(result.data.category_name).toBe('upd');
     expect(result.message).toBe('Category updated successfully!');
   });
 
   it('deleteCategory() -> deletes product, order and category', async () => {
-    mockProductsRepo.softDelete.mockResolvedValue({ raw: [{ id: 10 }] });
-    mockOrdersRepo.softDelete.mockResolvedValue({ raw: [] });
-    mockCategoriesRepo.softDelete.mockResolvedValue({ raw: [{ id: 1 }] });
+    mockProductsRepo.find.mockResolvedValue([{ id: 10 }] as any);
+    mockProductsRepo.delete.mockResolvedValue({ raw: [{ id: 10 }] });
+    mockOrdersRepo.delete.mockResolvedValue({ raw: [] });
+    mockCategoriesRepo.delete.mockResolvedValue({ raw: [{ id: 1 }] });
 
     const result = await service.deleteCategory({ id: 1 });
 
-    expect(mockProductsRepo.softDelete).toHaveBeenCalledWith(1);
-    expect(mockOrdersRepo.softDelete).toHaveBeenCalledWith(10);
-    expect(mockCategoriesRepo.softDelete).toHaveBeenCalledWith(1);
+    expect(mockProductsRepo.delete).toHaveBeenCalledWith(1);
+    expect(mockOrdersRepo.delete).toHaveBeenCalledWith({ product_id: 10 });
+    expect(mockCategoriesRepo.delete).toHaveBeenCalledWith(1);
 
     expect(result.status).toBe(200);
-    expect(result.data[0].id).toBe(1);
     expect(result.message).toBe('Category deleted successfully');
   });
 });

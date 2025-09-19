@@ -11,7 +11,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { CategoriesService } from './service/categories.service';
 import { CategoriesCreateDto } from './dto/categories.create.dto';

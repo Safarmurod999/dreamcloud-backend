@@ -4,19 +4,21 @@ import { Repository } from 'typeorm';
 import { CategoriesCreateDto } from '../dto/categories.create.dto';
 import { BaseResponse, BaseResponseGet } from 'src/utils/base.response';
 import { CategoriesUpdateDto } from '../dto/categories.update.dto';
-import { ProductEntity } from '@entities/products.entity';
-import { OrdersEntity } from '@entities/orders.entity';
+import { ProductEntity } from '../../entities/products.entity';
+import { OrdersEntity } from '../../entities/orders.entity';
 import { Tokens } from '../../utils/tokens';
 import { CategoriesRepository } from '../repository/categories.repository';
+import { CategoriesService } from './categories.service';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class CategoriesServiceImpl {
+export class CategoriesServiceImpl implements CategoriesService {
   constructor(
     @Inject(Tokens.Categories.Repository)
     private readonly categoriesRepository: CategoriesRepository,
-    @Inject(Tokens.Product.Repository)
+    @InjectRepository(ProductEntity)
     private readonly productsRepository: Repository<ProductEntity>,
-    @Inject(Tokens.Orders.Repository)
+    @InjectRepository(OrdersEntity)
     private readonly ordersRepository: Repository<OrdersEntity>,
   ) {}
 
@@ -81,7 +83,7 @@ export class CategoriesServiceImpl {
   async updateCategory(
     params: any,
     dto: CategoriesUpdateDto,
-  ): Promise<BaseResponse<CategoryEntity[]>> {
+  ): Promise<BaseResponse<CategoryEntity>> {
     let { category_name, isActive, state } = dto;
     let { id } = params;
     let category = await this.categoriesRepository.findOneBy({ id });
@@ -92,34 +94,44 @@ export class CategoriesServiceImpl {
         message: 'Category not found!',
       };
     }
-    const { raw } = await this.categoriesRepository.update(
-      { id },
-      {
-        category_name: category_name ?? category.category_name,
-        isActive: isActive ?? category.isActive,
-        state: state ?? category.state,
-      },
-    );
+
+    category.category_name = category_name ?? category.category_name;
+    category.isActive = isActive ?? category.isActive;
+    category.state = state ?? category.state;
+    await this.categoriesRepository.save(category);
+
     return {
-      status: HttpStatus.CREATED,
-      data: raw,
+      status: HttpStatus.OK,
+      data: category,
       message: 'Category updated successfully!',
     };
   }
 
   async deleteCategory(param: any): Promise<BaseResponse<CategoryEntity>> {
     const { id } = param;
-    let product = await this.productsRepository.softDelete(id);
 
-    let product_id = product.raw[0].id;
+    let product = await this.productsRepository.find({
+      where: { category_id: id },
+    });
+    await this.productsRepository.delete({ category_id: id });
 
-    await this.ordersRepository.softDelete(product_id);
+    let product_id = product[0].id;
 
-    let { raw } = await this.categoriesRepository.softDelete(id);
+    await this.ordersRepository.delete({ product_id });
+
+    let data = await this.categoriesRepository.findOneBy({ id });
+    if (!data) {
+      return {
+        status: HttpStatus.NOT_FOUND,
+        data: null,
+        message: 'Category not found!',
+      };
+    }
+    await this.categoriesRepository.delete(id);
 
     return {
-      status: 200,
-      data: raw,
+      status: HttpStatus.OK,
+      data: data,
       message: 'Category deleted successfully',
     };
   }

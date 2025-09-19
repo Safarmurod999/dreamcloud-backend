@@ -1,12 +1,12 @@
+import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity } from '../../entities/category.entity';
 import { CategoriesRepository } from './categories.repository';
-import { Inject } from '@nestjs/common';
-import { Tokens } from '../../utils/tokens';
+import { Repository } from 'typeorm';
 
 export class CategoriesRepositoryImpl implements CategoriesRepository {
   constructor(
-    @Inject(Tokens.Categories.Repository)
-    private readonly repository: CategoriesRepository,
+    @InjectRepository(CategoryEntity)
+    private readonly repository: Repository<CategoryEntity>,
   ) {}
   findOne(options?: any): Promise<CategoryEntity | null> {
     return this.repository.findOne(options);

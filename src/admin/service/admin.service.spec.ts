@@ -15,7 +15,6 @@ describe('AdminServiceImpl (unit)', () => {
       create: jest.fn(),
       save: jest.fn(),
       update: jest.fn(),
-      softDelete: jest.fn(),
       delete: jest.fn(),
     } as unknown as jest.Mocked<AdminRepository>;
 
@@ -122,27 +121,24 @@ describe('AdminServiceImpl (unit)', () => {
       null,
     );
 
-    expect(result.status).toBe(HttpStatus.CREATED);
+    expect(result.status).toBe(HttpStatus.OK);
     expect(result.message).toBe('Admin updated successfully!');
-    expect(repo.update).toHaveBeenCalledWith(
-      { id: 1 },
-      expect.objectContaining({ username: 'updated' }),
+    expect(repo.save).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 1, username: 'updated' }),
     );
   });
 
   // ----------------- deleteAdmin -----------------
   it('deleteAdmin() should delete and return success', async () => {
-    repo.softDelete.mockResolvedValue({
-      raw: [{ image: 'test.png' }],
-    } as any);
+    repo.findOneBy.mockResolvedValue({ id: 1, image: 'test.png' } as any);
+    repo.delete.mockResolvedValue({ affected: 1 } as any);
 
-    // unlinkSync ni mock qilish
     jest.spyOn(require('fs'), 'unlinkSync').mockImplementation(() => {});
 
     const result = await service.deleteAdmin({ id: 1 });
 
     expect(result.status).toBe(200);
     expect(result.message).toBe('Admin deleted successfully');
-    expect(repo.softDelete).toHaveBeenCalledWith(1);
+    expect(repo.delete).toHaveBeenCalledWith(1);
   });
 });

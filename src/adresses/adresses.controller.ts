@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   Put,
@@ -21,11 +22,15 @@ import { AddressesService } from './service/addresses.service';
 import { AddressCreateDto } from './dto/address.create.dto';
 import { AddressUpdateDto } from './dto/address.update.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Tokens } from '../utils/tokens';
 
 @ApiTags('addresses')
 @Controller('addresses')
 export class AddressesController {
-  constructor(private readonly addressesService: AddressesService) {}
+  constructor(
+    @Inject(Tokens.Addresses.Service)
+    private readonly addressesService: AddressesService,
+  ) {}
 
   @UseInterceptors(
     FileInterceptor('image', {

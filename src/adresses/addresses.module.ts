@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
-import { AddressesEntity } from '@entities/adresses.entity';
+import { AddressesEntity } from '../entities/adresses.entity';
 import { AddressesController } from './adresses.controller';
 import { AddressesServiceImpl } from './service/addresses.service.impl';
 import { AddressesRepositoryImpl } from './repository/addresses.repository.impl';

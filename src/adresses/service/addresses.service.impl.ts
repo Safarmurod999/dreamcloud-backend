@@ -80,7 +80,7 @@ export class AddressesServiceImpl implements AddressesService {
     params: any,
     dto: AddressUpdateDto,
     image: any,
-  ): Promise<BaseResponse<AddressesEntity[]>> {
+  ): Promise<BaseResponse<AddressesEntity>> {
     let { address, description, location, isActive, state } = dto;
     let { id } = params;
     let item = await this.addressesRepository.findOneBy({ id });
@@ -91,20 +91,17 @@ export class AddressesServiceImpl implements AddressesService {
         message: 'Address not found!',
       };
     }
-    const data = await this.addressesRepository.update(
-      { id },
-      {
-        address: address ?? item.address,
-        description: description ?? item.description,
-        location: location ?? item.location,
-        image: image ?? item.image,
-        isActive: isActive ?? item.isActive,
-        state: state ?? item.state,
-      },
-    );
+
+    item.address = address ?? item.address;
+    item.description = description ?? item.description;
+    item.location = location ?? item.location;
+    item.image = image ?? item.image;
+    item.isActive = isActive ?? item.isActive;
+    item.state = state ?? item.state;
+    const data = await this.addressesRepository.save(item);
 
     return {
-      status: HttpStatus.CREATED,
+      status: HttpStatus.OK,
       data: data,
       message: 'Address updated successfully!',
     };
@@ -112,13 +109,21 @@ export class AddressesServiceImpl implements AddressesService {
 
   async deleteAddress(param: any): Promise<BaseResponse<AddressesEntity>> {
     const { id } = param;
+    let item = await this.addressesRepository.findOneBy({ id });
+    if (!item) {
+      return {
+        status: HttpStatus.NOT_FOUND,
+        data: null,
+        message: 'Address not found!',
+      };
+    }
 
-    let { raw } = await this.addressesRepository.softDelete(id);
+    await this.addressesRepository.delete(id);
+    unlinkSync(process.cwd() + '/uploads/' + 'addresses/' + item.image);
 
-    unlinkSync(process.cwd() + '/uploads/' + 'addresses/' + raw[0].image);
     return {
       status: 200,
-      data: raw,
+      data: item,
       message: 'Address deleted successfully',
     };
   }

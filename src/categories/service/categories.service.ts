@@ -5,10 +5,13 @@ export interface CategoriesService {
   createCategory(
     data: Partial<CategoryEntity>,
   ): Promise<BaseResponse<CategoryEntity>>;
-  findAll(page: number, limit: number): Promise<BaseResponseGet<CategoryEntity[]>>;
+  findAll(
+    page: number,
+    limit: number,
+  ): Promise<BaseResponseGet<CategoryEntity[]>>;
   updateCategory(
-    id: number,
-    data: Partial<CategoryEntity>,
+    params: string,
+    dto: Partial<CategoryEntity>,
   ): Promise<BaseResponse<CategoryEntity> | null>;
   deleteCategory(param: string): Promise<BaseResponse<CategoryEntity> | null>;
 }
