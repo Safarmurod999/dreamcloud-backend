@@ -2,7 +2,6 @@ import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { bcryptSaltOrRounds } from './constants';
 import { HttpStatus, Logger } from '@nestjs/common';
-import { format } from 'date-fns';
 
 const logger = new Logger('Helper');
 

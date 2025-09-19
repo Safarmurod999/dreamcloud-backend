@@ -31,23 +31,23 @@ import { CustomersModule } from './customers/customers.module';
     CustomersModule,
     ServeStaticModule.forRoot({
       serveRoot: '/uploads',
-      rootPath: join(__dirname, '..', 'uploads'), // Path to your static folder
+      rootPath: join(__dirname, '..', 'uploads'),
     }),
     ServeStaticModule.forRoot({
       serveRoot: '/uploads/products',
-      rootPath: join(__dirname, '..', 'uploads', 'products'), // Path to your static folder
+      rootPath: join(__dirname, '..', 'uploads', 'products'),
     }),
     ServeStaticModule.forRoot({
       serveRoot: '/uploads/technologies',
-      rootPath: join(__dirname, '..', 'uploads', 'technologies'), // Path to your static folder
+      rootPath: join(__dirname, '..', 'uploads', 'technologies'),
     }),
     ServeStaticModule.forRoot({
       serveRoot: '/uploads/addresses',
-      rootPath: join(__dirname, '..', 'uploads', 'addresses'), // Path to your static folder
+      rootPath: join(__dirname, '..', 'uploads', 'addresses'),
     }),
     ServeStaticModule.forRoot({
       serveRoot: '/uploads/avatar',
-      rootPath: join(__dirname, '..', 'uploads', 'avatar'), // Path to your static folder
+      rootPath: join(__dirname, '..', 'uploads', 'avatar'),
     }),
   ],
   controllers: [],

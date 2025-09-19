@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   Put,
@@ -14,19 +15,22 @@ import {
 } from '@nestjs/common';
 
 import { Request, Response } from 'express';
-import { AdminService } from './admin.service';
+import { AdminService } from './service/admin.service';
 import { AdminCreateDto } from './dto/admin.create.dto';
-import { AdminUpdateDto } from './dto/admin.update.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { Tokens } from '@utils/tokens';
 
 @ApiTags('admin')
 @Controller('admin')
 export class AdminController {
-  constructor(private readonly adminsService: AdminService) {}
+  constructor(
+    @Inject(Tokens.Admin.Service)
+    private readonly adminsService: AdminService,
+  ) {}
 
   @Post()
   async addOne(@Body() dto: AdminCreateDto, @Res() res: Response) {
@@ -36,14 +40,18 @@ export class AdminController {
   }
 
   @Get()
-  async findAll(req: Request, @Res() res: Response,@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
-    let response = await this.adminsService.findAll(page,limit);
+  async findAll(
+    @Res() res: Response,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    let response = await this.adminsService.findAll(page, limit);
 
     res.status(response.status).send(response);
   }
 
   @Get('/:username')
-  async findOne(@Param() param, req: Request, @Res() res: Response) {
+  async findOne(@Param() param, @Res() res: Response) {
     let response = await this.adminsService.findOne(param);
 
     res.status(response.status).send(response);
@@ -54,7 +62,7 @@ export class AdminController {
     FileInterceptor('image', {
       storage: diskStorage({
         destination: './uploads/avatar',
-        filename: (req, file, cb) => {
+        filename: (_, file, cb) => {
           const randomName = Array(32)
             .fill(null)
             .map(() => Math.round(Math.random() * 16).toString(16))
@@ -67,11 +75,15 @@ export class AdminController {
   @Put('/:id')
   async updateCustomer(
     @UploadedFile() image: Express.Multer.File,
-    @Param() param,
+    @Param() param: string,
     @Body() dto: any,
     @Res() res: Response,
   ) {
-    let response = await this.adminsService.updateAdmin(param, dto,image?.filename);
+    let response = await this.adminsService.updateAdmin(
+      param,
+      dto,
+      image?.filename,
+    );
 
     res.status(response.status).send(response);
   }

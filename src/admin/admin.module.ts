@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminEntity } from 'src/entities/admin.entity';
-import { AdminService } from './admin.service';
+import { AdminServiceImpl } from './service/admin.service.impl';
+import { AdminRepositoryImpl } from './repository/admin.repository.impl';
 import { AdminController } from './admin.controller';
 import { MulterModule } from '@nestjs/platform-express';
+import { Tokens } from '@utils/tokens';
 
 @Module({
   imports: [
@@ -12,8 +14,22 @@ import { MulterModule } from '@nestjs/platform-express';
       dest: './uploads',
     }),
   ],
-  providers: [AdminService],
+  providers: [
+    {
+      provide: Tokens.Admin.Service,
+      useClass: AdminServiceImpl,
+    },
+    {
+      provide: Tokens.Admin.Repository,
+      useClass: AdminRepositoryImpl,
+    },
+  ],
   controllers: [AdminController],
-  exports: [AdminService],
+  exports: [
+    {
+      provide: Tokens.Admin.Service,
+      useClass: AdminServiceImpl,
+    },
+  ],
 })
 export class AdminModule {}

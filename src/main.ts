@@ -15,13 +15,13 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: '*', // You can set specific origins, e.g., ['http://example1.com', 'https://example2.com']
+    origin: '*', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Accept,Authorization',
     preflightContinue: false,
     optionsSuccessStatus: 200,
-    credentials: true, // Set this to true if you need cookies or authentication headers to be sent cross-origin
-    maxAge: 3600, // Cache preflight requests for 1 hour (in seconds)
+    credentials: true,
+    maxAge: 3600,
   });
   const config = new DocumentBuilder()
     .setTitle('Frontend : https://dream-cloud-matras.netlify.app')

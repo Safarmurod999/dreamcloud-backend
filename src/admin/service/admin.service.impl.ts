@@ -1,17 +1,18 @@
-import { AdminUpdateDto } from './dto/admin.update.dto';
-import { AdminEntity } from './../entities/admin.entity';
-import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { BaseResponse, BaseResponseGet } from 'src/utils/base.response';
-import { DbExceptions } from 'src/utils/exceptions/db.exception';
 import { unlinkSync } from 'fs';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { AdminUpdateDto } from '../dto/admin.update.dto';
+import { AdminEntity } from '../../entities/admin.entity';
+import { BaseResponse, BaseResponseGet } from 'src/utils/base.response';
+import { DbExceptions } from '../../utils/exceptions/db.exception';
+import { AdminRepository } from '../repository/admin.repository';
+import { Tokens } from '../../utils/tokens';
+import { AdminService } from './admin.service';
 
 @Injectable()
-export class AdminService {
+export class AdminServiceImpl implements AdminService {
   constructor(
-    @InjectRepository(AdminEntity)
-    private readonly adminRepository: Repository<AdminEntity>,
+    @Inject(Tokens.Admin.Repository)
+    private readonly adminRepository: AdminRepository,
   ) {}
 
   async findAll(
@@ -83,20 +84,16 @@ export class AdminService {
           message: 'Admin already exists!',
         };
       }
-      const newAdmin = await this.adminRepository
-        .createQueryBuilder('admins')
-        .insert()
-        .into(AdminEntity)
-        .values({
-          username,
-          password,
-          email,
-        })
-        .returning(['username', 'password', 'email'])
-        .execute();
+      const newAdmin = this.adminRepository.create({
+        username,
+        password,
+        email,
+      });
+
+      await this.adminRepository.save(newAdmin);
       return {
         status: HttpStatus.CREATED,
-        data: newAdmin.raw,
+        data: newAdmin,
         message: 'Admin created successfully!',
       };
     } catch (err) {
@@ -120,22 +117,19 @@ export class AdminService {
           message: 'Admin not found!',
         };
       }
-      const { raw } = await this.adminRepository
-        .createQueryBuilder('admins')
-        .update(AdminEntity)
-        .set({
+      const data = await this.adminRepository.update(
+        { id },
+        {
           username: username ?? admin.username,
           email: email ?? admin.email,
           password: password ?? admin.password,
           isSuperAdmin: isSuperAdmin ?? admin.isSuperAdmin,
           image: image ?? admin.image,
-        })
-        .where({ id })
-        .returning('*')
-        .execute();
+        },
+      );
       return {
         status: HttpStatus.CREATED,
-        data: raw,
+        data: data,
         message: 'Admin updated successfully!',
       };
     } catch (error) {
@@ -147,13 +141,7 @@ export class AdminService {
     try {
       const { id } = param;
 
-      let { raw } = await this.adminRepository
-        .createQueryBuilder()
-        .softDelete()
-        .from(AdminEntity)
-        .where({ id })
-        .returning('*')
-        .execute();
+      let { raw } = await this.adminRepository.softDelete(id);
       unlinkSync(process.cwd() + '/uploads/' + 'avatar/' + raw[0].image);
       return {
         status: 200,
