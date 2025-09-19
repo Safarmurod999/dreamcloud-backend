@@ -24,12 +24,27 @@ describe('AdminServiceImpl (unit)', () => {
 
   // ----------------- findAll -----------------
   it('findAll() should return paginated data', async () => {
-    repo.findAndCount.mockResolvedValue([[{ id: 1, username: 'admin' } as any], 1]);
+    repo.findAndCount.mockResolvedValue([
+      [{ id: 1, username: 'admin' } as any],
+      1,
+    ]);
 
-    const result = await service.findAll(1, 10);
+    const result = await service.findAll(NaN, NaN);
 
     expect(result.status).toBe(HttpStatus.OK);
     expect(result.data).toHaveLength(1);
+    expect(result.pagination.totalCount).toBe(1);
+  });
+
+  it('findAll() should default page and limit if NaN', async () => {
+    repo.findAndCount.mockResolvedValue([
+      [{ id: 1, username: 'admin' } as any],
+      1,
+    ]);
+    const result = await service.findAll(1, 10);
+
+    expect(result.status).toBe(HttpStatus.OK);
+    expect(result.data[0].username).toBe('admin');
     expect(result.pagination.totalCount).toBe(1);
   });
 
@@ -83,17 +98,29 @@ describe('AdminServiceImpl (unit)', () => {
   it('updateAdmin() should fail if admin not found', async () => {
     repo.findOneBy.mockResolvedValue(null);
 
-    const result = await service.updateAdmin({ id: 99 }, { username: 'x' } as any, null);
+    const result = await service.updateAdmin(
+      { id: 99 },
+      { username: 'x' } as any,
+      null,
+    );
 
     expect(result.status).toBe(HttpStatus.NOT_FOUND);
     expect(result.message).toBe('Admin not found!');
   });
 
   it('updateAdmin() should update if found', async () => {
-    repo.findOneBy.mockResolvedValue({ id: 1, username: 'admin', email: 'a@test.com' } as any);
+    repo.findOneBy.mockResolvedValue({
+      id: 1,
+      username: 'admin',
+      email: 'a@test.com',
+    } as any);
     repo.update.mockResolvedValue({ affected: 1 } as any);
 
-    const result = await service.updateAdmin({ id: 1 }, { username: 'updated' } as any, null);
+    const result = await service.updateAdmin(
+      { id: 1 },
+      { username: 'updated' } as any,
+      null,
+    );
 
     expect(result.status).toBe(HttpStatus.CREATED);
     expect(result.message).toBe('Admin updated successfully!');

@@ -17,7 +17,7 @@ import { JwtGuard } from 'src/auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { AddressesService } from './addresses.service';
+import { AddressesService } from './service/addresses.service';
 import { AddressCreateDto } from './dto/address.create.dto';
 import { AddressUpdateDto } from './dto/address.update.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -31,7 +31,7 @@ export class AddressesController {
     FileInterceptor('image', {
       storage: diskStorage({
         destination: './uploads/addresses',
-        filename: (req, file, cb) => {
+        filename: (_, file, cb) => {
           const randomName = Array(32)
             .fill(null)
             .map(() => Math.round(Math.random() * 16).toString(16))
@@ -56,8 +56,12 @@ export class AddressesController {
   }
 
   @Get()
-  async findAll(req: Request, @Res() res: Response,@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
-    let response = await this.addressesService.findAll(page,limit);
+  async findAll(
+    @Res() res: Response,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    let response = await this.addressesService.findAll(page, limit);
 
     res.status(response.status).send(response);
   }
@@ -67,7 +71,7 @@ export class AddressesController {
     FileInterceptor('image', {
       storage: diskStorage({
         destination: './uploads/addresses',
-        filename: (req, file, cb) => {
+        filename: (_, file, cb) => {
           const randomName = Array(32)
             .fill(null)
             .map(() => Math.round(Math.random() * 16).toString(16))

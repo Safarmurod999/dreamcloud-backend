@@ -1,5 +1,12 @@
-import { Logger, HttpStatus } from '@nestjs/common';
+import {
+  Logger,
+  HttpStatus,
+  Catch,
+  ExceptionFilter,
+  ArgumentsHost,
+} from '@nestjs/common';
 import { BaseResponse, BaseResponseGet } from '../base.response';
+import { Response } from 'express';
 
 export class DbExceptions {
   static handle(e): BaseResponse<null> {
@@ -29,5 +36,23 @@ export class DbExceptions {
         totalPages: 0,
       },
     };
+  }
+}
+
+@Catch(Error) // yoki faqat ma'lum errorlarni tutmoqchi bo'lsangiz
+export class DbExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(DbExceptionFilter.name);
+
+  catch(exception: any, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+
+    this.logger.error(exception);
+
+    response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: exception.message,
+      data: null,
+    });
   }
 }

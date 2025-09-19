@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { AddressesEntity } from '@entities/adresses.entity';
-import { AddressesService } from './addresses.service';
 import { AddressesController } from './adresses.controller';
+import { AddressesServiceImpl } from './service/addresses.service.impl';
+import { AddressesRepositoryImpl } from './repository/addresses.repository.impl';
+import { Tokens } from '../utils/tokens';
 
 @Module({
   imports: [
@@ -12,8 +14,22 @@ import { AddressesController } from './adresses.controller';
       dest: './uploads',
     }),
   ],
-  providers: [AddressesService],
+  providers: [
+    {
+      provide: Tokens.Addresses.Repository,
+      useClass: AddressesRepositoryImpl,
+    },
+    {
+      provide: Tokens.Addresses.Service,
+      useClass: AddressesServiceImpl,
+    },
+  ],
   controllers: [AddressesController],
-  exports: [AddressesService],
+  exports: [
+    {
+      provide: Tokens.Addresses.Service,
+      useClass: AddressesServiceImpl,
+    },
+  ],
 })
 export class AddressesModule {}
