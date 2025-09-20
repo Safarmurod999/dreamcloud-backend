@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   Put,
@@ -10,16 +11,20 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { JwtGuard } from 'src/auth/auth.guard';
+import {  Response } from 'express';
+import { JwtGuard } from '../auth/auth.guard';
 import { ApiTags } from '@nestjs/swagger';
-import { CustomersService } from './customers.service';
+import { CustomersService } from './service/customers.service';
 import { CustomersCreateDto } from './dto/customers.create.dto';
+import { Tokens } from '../utils/tokens';
 
 @ApiTags('customers')
 @Controller('customers')
 export class CustomersController {
-  constructor(private readonly customerService: CustomersService) {}
+  constructor(
+    @Inject(Tokens.Customers.Service)
+    private readonly customerService: CustomersService,
+  ) {}
 
   @Post()
   async addOne(@Body() dto: CustomersCreateDto, @Res() res: Response) {
@@ -29,7 +34,11 @@ export class CustomersController {
   }
 
   @Get()
-  async findAll(req: Request, @Res() res: Response,@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
+  async findAll(
+    @Res() res: Response,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
     let response = await this.customerService.findAll(page, limit);
 
     res.status(response.status).send(response);

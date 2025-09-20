@@ -117,4 +117,13 @@ describe('AddressesServiceImpl (unit)', () => {
 
     expect(result.message).toBe('Address deleted successfully');
   });
+
+  it('should return not found if address missing on delete', async () => {
+    repo.findOneBy.mockResolvedValue(null);
+    repo.delete.mockResolvedValue({ affected: 1 } as any);
+
+    const result = await service.deleteAddress({ id: 1 });
+    expect(result.status).toBe(HttpStatus.NOT_FOUND);
+    expect(result.message).toBe('Address not found!');
+  });
 });

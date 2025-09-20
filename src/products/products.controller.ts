@@ -1,32 +1,34 @@
+import { Request, Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   Body,
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   Put,
   Query,
   Res,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ProductsService } from './products.service';
-import { ProductCreateDto } from './dto/products.create.dto';
-import { Request, Response } from 'express';
-import { ProductUpdateDto } from './dto/product.update.dto';
-import { JwtGuard } from 'src/auth/auth.guard';
-import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from '@utils/multer';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { ApiTags } from '@nestjs/swagger';
+import { extname } from 'path';
+import { diskStorage } from 'multer';
+import { ProductsService } from './service/products.service';
+import { ProductCreateDto } from './dto/products.create.dto';
+import { JwtGuard } from '../auth/auth.guard';
+import { Tokens } from '../utils/tokens';
 
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    @Inject(Tokens.Product.Service)
+    private readonly productsService: ProductsService,
+  ) {}
 
   @UseInterceptors(
     FileInterceptor('image', {
@@ -56,8 +58,13 @@ export class ProductsController {
   }
 
   @Get()
-  async findAll(req: Request, @Res() res: Response,@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
-    let response = await this.productsService.findAll(page,limit);
+  async findAll(
+    req: Request,
+    @Res() res: Response,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    let response = await this.productsService.findAll(page, limit);
 
     res.status(response.status).send(response);
   }

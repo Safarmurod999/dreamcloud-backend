@@ -1,8 +1,10 @@
+import { Request, Response } from 'express';
 import {
   Body,
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   Put,
@@ -12,20 +14,23 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { JwtGuard } from 'src/auth/auth.guard';
-import { TechnologiesService } from './technology.service';
+import { ApiTags } from '@nestjs/swagger';
+import { extname } from 'path';
+import { diskStorage } from 'multer';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtGuard } from '../auth/auth.guard';
+import { TechnologyService } from './service/technology.service';
 import { TechnologyCreateDto } from './dto/technology.create.dto';
 import { TechnologyUpdateDto } from './dto/technology.update.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-import { ApiTags } from '@nestjs/swagger';
+import { Tokens } from '../utils/tokens';
 
 @ApiTags('technologies')
 @Controller('technologies')
 export class TechnologiesController {
-  constructor(private readonly technologiesService: TechnologiesService) {}
+  constructor(
+    @Inject(Tokens.Technologies.Service)
+    private readonly technologiesService: TechnologyService,
+  ) {}
 
   @UseInterceptors(
     FileInterceptor('video', {
@@ -47,14 +52,22 @@ export class TechnologiesController {
     @Body() dto: TechnologyCreateDto,
     @Res() res: Response,
   ) {
-    let response = await this.technologiesService.createTechnology(dto,video?.filename);
+    let response = await this.technologiesService.createTechnology(
+      dto,
+      video?.filename,
+    );
 
     res.status(response.status).send(response);
   }
 
   @Get()
-  async findAll(req: Request, @Res() res: Response,@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
-    let response = await this.technologiesService.findAll(page,limit);
+  async findAll(
+    req: Request,
+    @Res() res: Response,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    let response = await this.technologiesService.findAll(page, limit);
 
     res.status(response.status).send(response);
   }
@@ -81,7 +94,11 @@ export class TechnologiesController {
     @Body() dto: TechnologyUpdateDto,
     @Res() res: Response,
   ) {
-    let response = await this.technologiesService.updateTechnology(param, dto,video?.filename);
+    let response = await this.technologiesService.updateTechnology(
+      param,
+      dto,
+      video?.filename,
+    );
 
     res.status(response.status).send(response);
   }

@@ -1,13 +1,29 @@
-import { CustomersEntity } from '@entities/customers.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CustomersService } from './customers.service';
+import { CustomersEntity } from '../entities/customers.entity';
 import { CustomersController } from './customers.controller';
+import { Tokens } from '../utils/tokens';
+import { CustomersServiceImpl } from './service/customers.service.impl';
+import { CustomersRepositoryImpl } from './repository/customers.repository.impl';
 
 @Module({
   imports: [TypeOrmModule.forFeature([CustomersEntity])],
-  providers: [CustomersService],
+  providers: [
+    {
+      provide: Tokens.Customers.Repository,
+      useClass: CustomersRepositoryImpl,
+    },
+    {
+      provide: Tokens.Customers.Service,
+      useClass: CustomersServiceImpl,
+    },
+  ],
   controllers: [CustomersController],
-  exports: [CustomersService],
+  exports: [
+    {
+      provide: Tokens.Customers.Service,
+      useClass: CustomersServiceImpl,
+    },
+  ],
 })
 export class CustomersModule {}

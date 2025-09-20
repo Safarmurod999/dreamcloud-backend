@@ -141,4 +141,13 @@ describe('AdminServiceImpl (unit)', () => {
     expect(result.message).toBe('Admin deleted successfully');
     expect(repo.delete).toHaveBeenCalledWith(1);
   });
+
+  it('deleteAdmin() should return not found if admin missing', async () => {
+    repo.findOneBy.mockResolvedValue(null);
+    repo.delete.mockResolvedValue({ affected: 1 } as any);
+
+    const result = await service.deleteAdmin({ id: 1 });
+    expect(result.status).toBe(HttpStatus.NOT_FOUND);
+    expect(result.message).toBe('Admin not found!');
+  });
 });

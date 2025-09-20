@@ -128,4 +128,16 @@ describe('CategoriesServiceImpl (unit)', () => {
     expect(result.status).toBe(200);
     expect(result.message).toBe('Category deleted successfully');
   });
+
+  it('deleteCategory() -> returns NOT_FOUND if category missing', async () => {
+    mockProductsRepo.find.mockResolvedValue([{ id: 10 }] as any);
+    mockProductsRepo.delete.mockResolvedValue({ raw: [{ id: 10 }] });
+    mockOrdersRepo.delete.mockResolvedValue({ raw: [] });
+    mockCategoriesRepo.findOneBy.mockResolvedValue(null);
+    const result = await service.deleteCategory({ id: 1 });
+
+    expect(result.status).toBe(HttpStatus.NOT_FOUND);
+    expect(result.data).toBeNull();
+    expect(result.message).toBe('Category not found!');
+  });
 });

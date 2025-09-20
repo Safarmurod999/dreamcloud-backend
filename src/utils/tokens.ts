@@ -22,4 +22,12 @@ export const Tokens = {
     Repository: Symbol('ProductRepository'),
     Service: Symbol('ProductService'),
   },
+  Customers: {
+    Repository: Symbol('CustomersRepository'),
+    Service: Symbol('CustomersService'),
+  },
+  Technologies: {
+    Repository: Symbol('TechnologiesRepository'),
+    Service: Symbol('TechnologiesService'),
+  }
 };
