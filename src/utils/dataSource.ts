@@ -1,5 +1,4 @@
 import { DataSource } from "typeorm";
-import { configuration } from "./config";
+import { configuration } from './config';
 
-const dataSourceConfig = configuration.getDataSourceConfig();
-export const dataSource = new DataSource(dataSourceConfig);
+export const dataSource = new DataSource(configuration.getDataSourceConfig());

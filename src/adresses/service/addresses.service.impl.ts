@@ -2,7 +2,6 @@ import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { BaseResponse, BaseResponseGet } from 'src/utils/base.response';
 import { unlinkSync } from 'fs';
 import { AddressesEntity } from '../../entities/adresses.entity';
-import { DbExceptions } from '../../utils/exceptions/db.exception';
 import { AddressCreateDto } from '../dto/address.create.dto';
 import { AddressUpdateDto } from '../dto/address.update.dto';
 import { AddressesService } from './addresses.service';
