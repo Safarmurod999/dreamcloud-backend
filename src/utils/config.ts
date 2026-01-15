@@ -52,12 +52,6 @@ export const configuration = {
       ormConfig.synchronize = false;
     }
 
-    console.log(isProd
-      ? {
-        rejectUnauthorized: false,
-        ca: process.env['DB_CERT'],
-      }
-      : false,);
     return ormConfig;
   },
 };
